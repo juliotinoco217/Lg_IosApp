@@ -127,7 +127,7 @@ export function Header({ title, subtitle, dateRange, onDateRangeChange, onRefres
   }
 
   return (
-    <header className="flex flex-col gap-3 border-b bg-background px-4 py-3 md:h-16 md:flex-row md:items-center md:justify-between md:px-6">
+    <header className="flex flex-col gap-3 border-b bg-background px-4 py-3 pt-[max(env(safe-area-inset-top),12px)] md:h-16 md:flex-row md:items-center md:justify-between md:px-6 md:pt-3">
       <div className="flex items-start gap-3 md:items-center">
         {onOpenNav && (
           <Button

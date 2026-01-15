@@ -73,9 +73,10 @@ export function ShopifyDashboard({ dateRange, refreshKey }: ShopifyDashboardProp
       setLoading(true)
       try {
         const encodedRange = encodeURIComponent(dateRange)
+        // Charts always show 30 days of daily data, metrics use selected date range
         const [metricsRes, chartRes] = await Promise.all([
           apiFetch(`/api/metrics/overview?range=${encodedRange}`),
-          apiFetch(`/api/metrics/revenue-chart?range=${encodedRange}`),
+          apiFetch(`/api/metrics/revenue-chart?range=30d`),
         ])
 
         if (metricsRes.ok) {
@@ -310,9 +311,12 @@ export function ShopifyDashboard({ dateRange, refreshKey }: ShopifyDashboardProp
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <div className="h-2 w-2 rounded-full bg-green-500" />
-              Shopify Revenue
+            <CardTitle className="flex items-center justify-between text-base">
+              <span className="flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-green-500" />
+                Shopify Revenue
+              </span>
+              <span className="text-xs font-normal text-muted-foreground">Last 30 Days</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -361,9 +365,12 @@ export function ShopifyDashboard({ dateRange, refreshKey }: ShopifyDashboardProp
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <div className="h-2 w-2 rounded-full bg-green-500" />
-              Orders per Day
+            <CardTitle className="flex items-center justify-between text-base">
+              <span className="flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-green-500" />
+                Orders per Day
+              </span>
+              <span className="text-xs font-normal text-muted-foreground">Last 30 Days</span>
             </CardTitle>
           </CardHeader>
           <CardContent>

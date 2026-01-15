@@ -4,8 +4,6 @@ import { KPITable } from "./KPITable"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { FormulaTooltip } from "@/components/ui/formula-tooltip"
-import { HeroMetric } from "@/components/ui/hero-metric"
-import { FinanceChart } from "@/components/ui/finance-chart"
 import { MarketCard } from "@/components/ui/market-card"
 import { HorizontalScrollSection } from "@/components/ui/horizontal-scroll"
 import {
@@ -19,6 +17,8 @@ import {
   Megaphone,
   RotateCcw,
   Wallet,
+  ChevronDown,
+  TrendingUp,
 } from "lucide-react"
 import {
   Tooltip,
@@ -26,6 +26,11 @@ import {
   PieChart,
   Pie,
   Cell,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Legend,
 } from "recharts"
 import type { DateRangeValue } from "@/components/layout/Header"
 import { apiFetch } from "@/lib/api"
@@ -82,6 +87,39 @@ const BREAKDOWN_TIME_RANGES: { value: BreakdownTimeRange; label: string }[] = [
   { value: "90d", label: "90D" },
 ]
 
+// Robinhood-style chart configuration
+type ChartMetricType = "revenue_vs_spend" | "mer" | "contribution" | "orders" | "customers"
+type ChartTimeRange = "7d" | "14d" | "30d"
+
+const CHART_METRICS: { value: ChartMetricType; label: string; description: string }[] = [
+  { value: "revenue_vs_spend", label: "Revenue vs Ad Spend", description: "Compare daily revenue and ad spend" },
+  { value: "mer", label: "MER (Efficiency)", description: "Marketing Efficiency Ratio over time" },
+  { value: "contribution", label: "Contribution Margin", description: "Daily contribution margin" },
+  { value: "orders", label: "Orders", description: "Daily order count" },
+  { value: "customers", label: "New vs Returning", description: "Customer acquisition breakdown" },
+]
+
+const CHART_TIME_RANGES: { value: ChartTimeRange; label: string }[] = [
+  { value: "7d", label: "7D" },
+  { value: "14d", label: "14D" },
+  { value: "30d", label: "30D" },
+]
+
+interface DailyMetric {
+  date: string
+  dateRaw: string
+  netSales: number
+  grossSales: number
+  totalSales: number
+  orders: number
+  adSpend: number
+  cogs: number
+  shipping: number
+  contributionMargin: number
+  newCustomerRevenue?: number
+  returningCustomerRevenue?: number
+}
+
 interface BreakdownMetrics {
   netSales: number
   cogs: number
@@ -92,18 +130,10 @@ interface BreakdownMetrics {
   netProfit: number
 }
 
-// Chart data interface for sales trend (must match DataPoint from FinanceChart)
-interface SalesTrendData {
-  date: string
-  value: number
-  [key: string]: string | number
-}
-
 export function OverviewDashboard({ dateRange, refreshKey }: OverviewDashboardProps) {
   const [metrics, setMetrics] = useState<OverviewMetrics | null>(null)
   const [payrollData, setPayrollData] = useState<PayrollData | null>(null)
   const [loading, setLoading] = useState(true)
-  const [salesTrend, setSalesTrend] = useState<SalesTrendData[]>([])
   const isMobile = useMobile()
 
   // Breakdown chart state
@@ -111,15 +141,21 @@ export function OverviewDashboard({ dateRange, refreshKey }: OverviewDashboardPr
   const [breakdownMetrics, setBreakdownMetrics] = useState<BreakdownMetrics | null>(null)
   const [breakdownLoading, setBreakdownLoading] = useState(false)
 
+  // Robinhood-style chart state
+  const [chartMetric, setChartMetric] = useState<ChartMetricType>("revenue_vs_spend")
+  const [chartTimeRange, setChartTimeRange] = useState<ChartTimeRange>("30d")
+  const [chartData, setChartData] = useState<DailyMetric[]>([])
+  const [chartLoading, setChartLoading] = useState(false)
+  const [showMetricDropdown, setShowMetricDropdown] = useState(false)
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true)
       try {
         const encodedRange = encodeURIComponent(dateRange)
-        const [metricsRes, payrollRes, trendRes] = await Promise.all([
+        const [metricsRes, payrollRes] = await Promise.all([
           apiFetch(`/api/metrics/overview?range=${encodedRange}`),
           apiFetch(`/api/finance/payroll?range=${encodedRange}`),
-          apiFetch(`/api/metrics/sales-trend?range=${encodedRange}`),
         ])
 
         if (metricsRes.ok) {
@@ -130,17 +166,6 @@ export function OverviewDashboard({ dateRange, refreshKey }: OverviewDashboardPr
         if (payrollRes.ok) {
           const payroll = await payrollRes.json()
           setPayrollData(payroll)
-        }
-
-        if (trendRes.ok) {
-          const trendData = await trendRes.json()
-          // Transform trend data for chart
-          if (trendData?.data) {
-            setSalesTrend(trendData.data.map((d: { date: string; netSales: number }) => ({
-              date: d.date,
-              value: d.netSales || 0,
-            })))
-          }
         }
       } catch (error) {
         console.error("Failed to fetch metrics:", error)
@@ -200,6 +225,30 @@ export function OverviewDashboard({ dateRange, refreshKey }: OverviewDashboardPr
   useEffect(() => {
     fetchBreakdownData(breakdownRange)
   }, [breakdownRange, fetchBreakdownData, refreshKey])
+
+  // Fetch chart data for Robinhood-style chart
+  useEffect(() => {
+    const fetchChartData = async () => {
+      setChartLoading(true)
+      try {
+        const response = await apiFetch(`/api/metrics/daily-metrics?range=${chartTimeRange}`)
+        if (response.ok) {
+          const data = await response.json()
+          // Sort by date ascending for chart
+          const sortedData = [...data].sort((a: DailyMetric, b: DailyMetric) =>
+            new Date(a.dateRaw).getTime() - new Date(b.dateRaw).getTime()
+          )
+          setChartData(sortedData)
+        }
+      } catch (error) {
+        console.error("Failed to fetch chart data:", error)
+      } finally {
+        setChartLoading(false)
+      }
+    }
+
+    fetchChartData()
+  }, [chartTimeRange, refreshKey])
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -279,39 +328,275 @@ export function OverviewDashboard({ dateRange, refreshKey }: OverviewDashboardPr
   const aov = metrics?.aov || 0
   const cac = metrics?.cac || 0
 
-  // Calculate change for hero metric (would need previous period data in real implementation)
-  const previousNetSales = netSales * 0.9 // Placeholder - replace with actual previous period
-  const salesChange = netSales - previousNetSales
-  const salesChangePercent = previousNetSales > 0 ? (salesChange / previousNetSales) * 100 : 0
-
   return (
     <div className="space-y-6 md:space-y-8">
+      {/* Robinhood-Style Performance Chart - FIRST, Full Width */}
+      <div className="-mx-4 md:-mx-6 px-4 md:px-6 py-6 bg-gradient-to-b from-background via-background to-muted/10">
+        {/* Chart Header with Dropdown */}
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
+          {/* Metric Selector Dropdown */}
+          <div className="relative z-50">
+            <button
+              onClick={() => setShowMetricDropdown(!showMetricDropdown)}
+              className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#1c1c1e] border border-white/10 hover:border-rh-accent/50 transition-all w-full md:min-w-[320px]"
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rh-accent/20">
+                <TrendingUp className="h-5 w-5 text-rh-accent" />
+              </div>
+              <div className="flex-1 text-left">
+                <p className="text-sm font-semibold text-white">
+                  {CHART_METRICS.find(m => m.value === chartMetric)?.label}
+                </p>
+                <p className="text-xs text-gray-400">
+                  {CHART_METRICS.find(m => m.value === chartMetric)?.description}
+                </p>
+              </div>
+              <ChevronDown className={`h-5 w-5 text-gray-400 transition-transform ${showMetricDropdown ? 'rotate-180' : ''}`} />
+            </button>
+
+            {/* Dropdown Menu */}
+            {showMetricDropdown && (
+              <div className="absolute top-full left-0 mt-2 w-full bg-[#1c1c1e] border border-white/10 rounded-xl shadow-2xl z-[100] overflow-hidden">
+                {CHART_METRICS.map((metric) => (
+                  <button
+                    key={metric.value}
+                    onClick={() => {
+                      setChartMetric(metric.value)
+                      setShowMetricDropdown(false)
+                    }}
+                    className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors ${
+                      chartMetric === metric.value ? 'bg-rh-accent/10 border-l-2 border-rh-accent' : ''
+                    }`}
+                  >
+                    <div className={`flex h-8 w-8 items-center justify-center rounded-full ${
+                      chartMetric === metric.value ? 'bg-rh-accent/20' : 'bg-white/5'
+                    }`}>
+                      <TrendingUp className={`h-4 w-4 ${chartMetric === metric.value ? 'text-rh-accent' : 'text-gray-400'}`} />
+                    </div>
+                    <div className="flex-1 text-left">
+                      <p className={`text-sm font-medium ${chartMetric === metric.value ? 'text-rh-accent' : 'text-white'}`}>
+                        {metric.label}
+                      </p>
+                      <p className="text-xs text-gray-500">{metric.description}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Time Range Selector */}
+          <div className="flex items-center gap-1 p-1 bg-white/5 rounded-lg">
+            {CHART_TIME_RANGES.map((range) => (
+              <button
+                key={range.value}
+                onClick={() => setChartTimeRange(range.value)}
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
+                  chartTimeRange === range.value
+                    ? 'bg-rh-accent text-white shadow-sm'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                {range.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Hero Values based on metric type */}
+        {chartMetric === "revenue_vs_spend" && chartData.length > 0 && (
+          <div className="flex flex-wrap gap-6 md:gap-12 mb-6">
+            <div>
+              <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Total Revenue</p>
+              <p className="text-3xl md:text-4xl font-bold text-rh-positive">
+                {formatCompact(chartData.reduce((sum, d) => sum + (d.netSales || 0), 0))}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Total Ad Spend</p>
+              <p className="text-3xl md:text-4xl font-bold text-rh-accent">
+                {formatCompact(chartData.reduce((sum, d) => sum + (d.adSpend || 0), 0))}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Avg MER</p>
+              <p className="text-3xl md:text-4xl font-bold text-white">
+                {(() => {
+                  const totalRevenue = chartData.reduce((sum, d) => sum + (d.netSales || 0), 0)
+                  const totalSpend = chartData.reduce((sum, d) => sum + (d.adSpend || 0), 0)
+                  return totalSpend > 0 ? (totalRevenue / totalSpend).toFixed(2) : '0.00'
+                })()}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Chart */}
+        <div className="h-[280px] md:h-[350px]">
+          {chartLoading ? (
+            <div className="flex h-full items-center justify-center">
+              <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+            </div>
+          ) : chartData.length > 0 ? (
+            <ResponsiveContainer width="100%" height="100%">
+              {chartMetric === "revenue_vs_spend" ? (
+                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="revenueGradientMain" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#00c853" stopOpacity={0.4} />
+                      <stop offset="100%" stopColor="#00c853" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="spendGradientMain" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#ff6b35" stopOpacity={0.4} />
+                      <stop offset="100%" stopColor="#ff6b35" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis
+                    dataKey="date"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#6b7280', fontSize: 10 }}
+                    dy={10}
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#6b7280', fontSize: 10 }}
+                    tickFormatter={(v) => `$${v >= 1000 ? `${(v/1000).toFixed(0)}k` : v}`}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#1c1c1e',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '12px',
+                      boxShadow: '0 10px 40px rgba(0,0,0,0.4)',
+                    }}
+                    labelStyle={{ color: '#fff' }}
+                    formatter={(value: number | undefined, name?: string) => [
+                      formatCurrency(value ?? 0),
+                      name === 'netSales' ? 'Revenue' : 'Ad Spend'
+                    ]}
+                  />
+                  <Legend
+                    verticalAlign="top"
+                    height={36}
+                    formatter={(value) => <span style={{ color: '#9ca3af' }}>{value === 'netSales' ? 'Revenue' : 'Ad Spend'}</span>}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="netSales"
+                    name="netSales"
+                    stroke="#00c853"
+                    fill="url(#revenueGradientMain)"
+                    strokeWidth={2}
+                    dot={false}
+                    activeDot={{ r: 6, stroke: '#000', strokeWidth: 2, fill: '#00c853' }}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="adSpend"
+                    name="adSpend"
+                    stroke="#ff6b35"
+                    fill="url(#spendGradientMain)"
+                    strokeWidth={2}
+                    dot={false}
+                    activeDot={{ r: 6, stroke: '#000', strokeWidth: 2, fill: '#ff6b35' }}
+                  />
+                </AreaChart>
+              ) : chartMetric === "mer" ? (
+                <AreaChart
+                  data={chartData.map(d => ({
+                    ...d,
+                    mer: d.adSpend > 0 ? d.netSales / d.adSpend : 0
+                  }))}
+                  margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient id="merGradientMain" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#d4af37" stopOpacity={0.5} />
+                      <stop offset="100%" stopColor="#d4af37" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 10 }} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 10 }} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: '#1c1c1e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                    labelStyle={{ color: '#fff' }}
+                    formatter={(value: number | undefined) => [(value ?? 0).toFixed(2), 'MER']}
+                  />
+                  <Area type="monotone" dataKey="mer" stroke="#d4af37" fill="url(#merGradientMain)" strokeWidth={3} dot={false} />
+                </AreaChart>
+              ) : chartMetric === "contribution" ? (
+                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="contribGradientMain" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#00c853" stopOpacity={0.5} />
+                      <stop offset="100%" stopColor="#00c853" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 10 }} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 10 }} tickFormatter={(v) => `$${v >= 1000 ? `${(v/1000).toFixed(0)}k` : v}`} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: '#1c1c1e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                    labelStyle={{ color: '#fff' }}
+                    formatter={(value: number | undefined) => [formatCurrency(value ?? 0), 'Contribution Margin']}
+                  />
+                  <Area type="monotone" dataKey="contributionMargin" stroke="#00c853" fill="url(#contribGradientMain)" strokeWidth={3} dot={false} />
+                </AreaChart>
+              ) : chartMetric === "orders" ? (
+                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="ordersGradientMain" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#ff6b35" stopOpacity={0.5} />
+                      <stop offset="100%" stopColor="#ff6b35" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 10 }} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 10 }} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: '#1c1c1e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                    labelStyle={{ color: '#fff' }}
+                    formatter={(value: number | undefined) => [value ?? 0, 'Orders']}
+                  />
+                  <Area type="monotone" dataKey="orders" stroke="#ff6b35" fill="url(#ordersGradientMain)" strokeWidth={3} dot={false} />
+                </AreaChart>
+              ) : (
+                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="newGradientMain" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#00c853" stopOpacity={0.4} />
+                      <stop offset="100%" stopColor="#00c853" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="returningGradientMain" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#d4af37" stopOpacity={0.4} />
+                      <stop offset="100%" stopColor="#d4af37" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 10 }} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 10 }} tickFormatter={(v) => `$${v >= 1000 ? `${(v/1000).toFixed(0)}k` : v}`} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: '#1c1c1e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                    labelStyle={{ color: '#fff' }}
+                    formatter={(value: number | undefined, name?: string) => [formatCurrency(value ?? 0), name === 'newCustomerRevenue' ? 'New Customer' : 'Returning']}
+                  />
+                  <Legend verticalAlign="top" height={36} formatter={(value) => <span style={{ color: '#9ca3af' }}>{value === 'newCustomerRevenue' ? 'New Customers' : 'Returning'}</span>} />
+                  <Area type="monotone" dataKey="newCustomerRevenue" stroke="#00c853" fill="url(#newGradientMain)" strokeWidth={2} dot={false} />
+                  <Area type="monotone" dataKey="returningCustomerRevenue" stroke="#d4af37" fill="url(#returningGradientMain)" strokeWidth={2} dot={false} />
+                </AreaChart>
+              )}
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex h-full flex-col items-center justify-center text-gray-500 gap-2">
+              <TrendingUp className="h-12 w-12 opacity-20" />
+              <p>No data available for this period</p>
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Mobile Robinhood-Style Hero Section */}
       {isMobile && (
         <div className="space-y-4">
-          {/* Hero Metric */}
-          <HeroMetric
-            label="Net Sales"
-            value={formatCurrency(netSales)}
-            change={{
-              value: salesChange,
-              percent: salesChangePercent,
-              direction: salesChange >= 0 ? "up" : "down",
-            }}
-            period={dateRange}
-          />
-
-          {/* Sales Trend Chart */}
-          {salesTrend.length > 0 && (
-            <FinanceChart
-              data={salesTrend}
-              color="orange"
-              height={200}
-              showAxes={false}
-              gradientOpacity={0.2}
-            />
-          )}
-
           {/* Key Metrics Horizontal Scroll */}
           <HorizontalScrollSection title="Key Metrics">
             <MarketCard
