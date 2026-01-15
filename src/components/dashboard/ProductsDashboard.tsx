@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { MobileCardView } from "@/components/ui/mobile-card-view"
 import {
   DollarSign,
   Package,
@@ -90,15 +91,21 @@ export function ProductsDashboard({ dateRange, refreshKey }: ProductsDashboardPr
   }
 
   const getMarginColor = (margin: number) => {
-    if (margin >= 50) return "text-green-600"
-    if (margin >= 30) return "text-yellow-600"
-    return "text-red-600"
+    if (margin >= 50) return "text-rh-positive"
+    if (margin >= 30) return "text-rh-accent-gold"
+    return "text-rh-negative"
   }
 
   const getMarginBg = (margin: number) => {
-    if (margin >= 50) return "bg-green-500/10"
-    if (margin >= 30) return "bg-yellow-500/10"
-    return "bg-red-500/10"
+    if (margin >= 50) return "bg-rh-positive/10"
+    if (margin >= 30) return "bg-rh-accent-gold/10"
+    return "bg-rh-negative/10"
+  }
+
+  const getMarginVariant = (margin: number): "positive" | "warning" | "negative" => {
+    if (margin >= 50) return "positive"
+    if (margin >= 30) return "warning"
+    return "negative"
   }
 
   const handleSort = (field: SortField) => {
@@ -151,8 +158,8 @@ export function ProductsDashboard({ dateRange, refreshKey }: ProductsDashboardPr
         <Card>
           <CardContent className="p-3 md:pt-6 md:px-6">
             <div className="flex items-center gap-2">
-              <div className="rounded-md bg-blue-500/10 p-1.5 md:p-2">
-                <DollarSign size={14} className="text-blue-600 md:w-4 md:h-4" />
+              <div className="rounded-md bg-rh-accent/10 p-1.5 md:p-2">
+                <DollarSign size={14} className="text-rh-accent md:w-4 md:h-4" />
               </div>
               <div>
                 <p className="text-xs md:text-sm text-muted-foreground">Net Sales</p>
@@ -167,8 +174,8 @@ export function ProductsDashboard({ dateRange, refreshKey }: ProductsDashboardPr
         <Card>
           <CardContent className="p-3 md:pt-6 md:px-6">
             <div className="flex items-center gap-2">
-              <div className="rounded-md bg-orange-500/10 p-1.5 md:p-2">
-                <Package size={14} className="text-orange-600 md:w-4 md:h-4" />
+              <div className="rounded-md bg-rh-negative/10 p-1.5 md:p-2">
+                <Package size={14} className="text-rh-negative md:w-4 md:h-4" />
               </div>
               <div>
                 <p className="text-xs md:text-sm text-muted-foreground">COGS</p>
@@ -183,8 +190,8 @@ export function ProductsDashboard({ dateRange, refreshKey }: ProductsDashboardPr
         <Card>
           <CardContent className="p-3 md:pt-6 md:px-6">
             <div className="flex items-center gap-2">
-              <div className="rounded-md bg-green-500/10 p-1.5 md:p-2">
-                <TrendingUp size={14} className="text-green-600 md:w-4 md:h-4" />
+              <div className="rounded-md bg-rh-positive/10 p-1.5 md:p-2">
+                <TrendingUp size={14} className="text-rh-positive md:w-4 md:h-4" />
               </div>
               <div>
                 <p className="text-xs md:text-sm text-muted-foreground">Gross Profit</p>
@@ -213,116 +220,132 @@ export function ProductsDashboard({ dateRange, refreshKey }: ProductsDashboardPr
         </Card>
       </div>
 
-      {/* Category Table */}
+      {/* Category Table / Mobile Cards */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Product Category Profitability</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b">
-                  <th
-                    className="cursor-pointer px-4 py-3 text-left font-medium hover:bg-muted/50"
-                    onClick={() => handleSort("category")}
-                  >
-                    <div className="flex items-center gap-1">
-                      Category {getSortIcon("category")}
-                    </div>
-                  </th>
-                  <th
-                    className="cursor-pointer px-4 py-3 text-right font-medium hover:bg-muted/50"
-                    onClick={() => handleSort("netSales")}
-                  >
-                    <div className="flex items-center justify-end gap-1">
-                      Net Sales {getSortIcon("netSales")}
-                    </div>
-                  </th>
-                  <th
-                    className="cursor-pointer px-4 py-3 text-right font-medium hover:bg-muted/50"
-                    onClick={() => handleSort("cogs")}
-                  >
-                    <div className="flex items-center justify-end gap-1">
-                      COGS {getSortIcon("cogs")}
-                    </div>
-                  </th>
-                  <th
-                    className="cursor-pointer px-4 py-3 text-right font-medium hover:bg-muted/50"
-                    onClick={() => handleSort("grossProfit")}
-                  >
-                    <div className="flex items-center justify-end gap-1">
-                      Gross Profit {getSortIcon("grossProfit")}
-                    </div>
-                  </th>
-                  <th
-                    className="cursor-pointer px-4 py-3 text-right font-medium hover:bg-muted/50"
-                    onClick={() => handleSort("marginPercent")}
-                  >
-                    <div className="flex items-center justify-end gap-1">
-                      Margin % {getSortIcon("marginPercent")}
-                    </div>
-                  </th>
-                  <th
-                    className="cursor-pointer px-4 py-3 text-right font-medium hover:bg-muted/50"
-                    onClick={() => handleSort("unitsSold")}
-                  >
-                    <div className="flex items-center justify-end gap-1">
-                      Units {getSortIcon("unitsSold")}
-                    </div>
-                  </th>
-                  <th
-                    className="cursor-pointer px-4 py-3 text-right font-medium hover:bg-muted/50"
-                    onClick={() => handleSort("orderCount")}
-                  >
-                    <div className="flex items-center justify-end gap-1">
-                      Orders {getSortIcon("orderCount")}
-                    </div>
-                  </th>
-                  <th
-                    className="cursor-pointer px-4 py-3 text-right font-medium hover:bg-muted/50"
-                    onClick={() => handleSort("aov")}
-                  >
-                    <div className="flex items-center justify-end gap-1">
-                      AOV {getSortIcon("aov")}
-                    </div>
-                  </th>
-                  <th
-                    className="cursor-pointer px-4 py-3 text-right font-medium hover:bg-muted/50"
-                    onClick={() => handleSort("percentOfTotal")}
-                  >
-                    <div className="flex items-center justify-end gap-1">
-                      % of Total {getSortIcon("percentOfTotal")}
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedCategories.map((cat) => (
-                  <tr key={cat.category} className="border-b hover:bg-muted/30">
-                    <td className="px-4 py-3 font-medium">{cat.category}</td>
-                    <td className="px-4 py-3 text-right">{formatCurrency(cat.netSales)}</td>
-                    <td className="px-4 py-3 text-right">{formatCurrency(cat.cogs)}</td>
-                    <td className="px-4 py-3 text-right">{formatCurrency(cat.grossProfit)}</td>
-                    <td className={`px-4 py-3 text-right font-medium ${getMarginColor(cat.marginPercent)}`}>
-                      {formatPercent(cat.marginPercent)}
-                    </td>
-                    <td className="px-4 py-3 text-right">{formatNumber(cat.unitsSold)}</td>
-                    <td className="px-4 py-3 text-right">{formatNumber(cat.orderCount)}</td>
-                    <td className="px-4 py-3 text-right">{formatCurrency(cat.aov)}</td>
-                    <td className="px-4 py-3 text-right">{formatPercent(cat.percentOfTotal)}</td>
-                  </tr>
-                ))}
-                {sortedCategories.length === 0 && (
-                  <tr>
-                    <td colSpan={9} className="px-4 py-8 text-center text-muted-foreground">
-                      No product data found for this date range
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          <MobileCardView
+            data={sortedCategories}
+            renderCard={(cat) => ({
+              title: cat.category,
+              fields: [
+                { label: "Net Sales", value: formatCurrency(cat.netSales) },
+                { label: "COGS", value: formatCurrency(cat.cogs) },
+                { label: "Gross Profit", value: formatCurrency(cat.grossProfit), colorClass: "text-rh-positive" },
+                { label: "Margin", value: formatPercent(cat.marginPercent), colorClass: getMarginColor(cat.marginPercent) },
+                { label: "Units Sold", value: formatNumber(cat.unitsSold) },
+                { label: "Orders", value: formatNumber(cat.orderCount) },
+                { label: "AOV", value: formatCurrency(cat.aov) },
+                { label: "% of Total", value: formatPercent(cat.percentOfTotal), highlight: true },
+              ],
+              badge: {
+                text: formatPercent(cat.marginPercent),
+                variant: getMarginVariant(cat.marginPercent),
+              },
+            })}
+            renderTable={() => (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b">
+                      <th
+                        className="cursor-pointer px-4 py-3 text-left font-medium hover:bg-muted/50"
+                        onClick={() => handleSort("category")}
+                      >
+                        <div className="flex items-center gap-1">
+                          Category {getSortIcon("category")}
+                        </div>
+                      </th>
+                      <th
+                        className="cursor-pointer px-4 py-3 text-right font-medium hover:bg-muted/50"
+                        onClick={() => handleSort("netSales")}
+                      >
+                        <div className="flex items-center justify-end gap-1">
+                          Net Sales {getSortIcon("netSales")}
+                        </div>
+                      </th>
+                      <th
+                        className="cursor-pointer px-4 py-3 text-right font-medium hover:bg-muted/50"
+                        onClick={() => handleSort("cogs")}
+                      >
+                        <div className="flex items-center justify-end gap-1">
+                          COGS {getSortIcon("cogs")}
+                        </div>
+                      </th>
+                      <th
+                        className="cursor-pointer px-4 py-3 text-right font-medium hover:bg-muted/50"
+                        onClick={() => handleSort("grossProfit")}
+                      >
+                        <div className="flex items-center justify-end gap-1">
+                          Gross Profit {getSortIcon("grossProfit")}
+                        </div>
+                      </th>
+                      <th
+                        className="cursor-pointer px-4 py-3 text-right font-medium hover:bg-muted/50"
+                        onClick={() => handleSort("marginPercent")}
+                      >
+                        <div className="flex items-center justify-end gap-1">
+                          Margin % {getSortIcon("marginPercent")}
+                        </div>
+                      </th>
+                      <th
+                        className="cursor-pointer px-4 py-3 text-right font-medium hover:bg-muted/50"
+                        onClick={() => handleSort("unitsSold")}
+                      >
+                        <div className="flex items-center justify-end gap-1">
+                          Units {getSortIcon("unitsSold")}
+                        </div>
+                      </th>
+                      <th
+                        className="cursor-pointer px-4 py-3 text-right font-medium hover:bg-muted/50"
+                        onClick={() => handleSort("orderCount")}
+                      >
+                        <div className="flex items-center justify-end gap-1">
+                          Orders {getSortIcon("orderCount")}
+                        </div>
+                      </th>
+                      <th
+                        className="cursor-pointer px-4 py-3 text-right font-medium hover:bg-muted/50"
+                        onClick={() => handleSort("aov")}
+                      >
+                        <div className="flex items-center justify-end gap-1">
+                          AOV {getSortIcon("aov")}
+                        </div>
+                      </th>
+                      <th
+                        className="cursor-pointer px-4 py-3 text-right font-medium hover:bg-muted/50"
+                        onClick={() => handleSort("percentOfTotal")}
+                      >
+                        <div className="flex items-center justify-end gap-1">
+                          % of Total {getSortIcon("percentOfTotal")}
+                        </div>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sortedCategories.map((cat) => (
+                      <tr key={cat.category} className="border-b hover:bg-muted/30">
+                        <td className="px-4 py-3 font-medium">{cat.category}</td>
+                        <td className="px-4 py-3 text-right">{formatCurrency(cat.netSales)}</td>
+                        <td className="px-4 py-3 text-right">{formatCurrency(cat.cogs)}</td>
+                        <td className="px-4 py-3 text-right">{formatCurrency(cat.grossProfit)}</td>
+                        <td className={`px-4 py-3 text-right font-medium ${getMarginColor(cat.marginPercent)}`}>
+                          {formatPercent(cat.marginPercent)}
+                        </td>
+                        <td className="px-4 py-3 text-right">{formatNumber(cat.unitsSold)}</td>
+                        <td className="px-4 py-3 text-right">{formatNumber(cat.orderCount)}</td>
+                        <td className="px-4 py-3 text-right">{formatCurrency(cat.aov)}</td>
+                        <td className="px-4 py-3 text-right">{formatPercent(cat.percentOfTotal)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            emptyMessage="No product data found for this date range"
+          />
         </CardContent>
       </Card>
     </div>

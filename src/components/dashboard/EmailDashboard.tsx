@@ -291,15 +291,15 @@ export function EmailDashboard({ dateRange, refreshKey }: EmailDashboardProps) {
             <CardContent>
               <div className="flex items-center gap-6 mb-4 text-sm">
                 <div className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded bg-emerald-500" />
+                  <div className="h-3 w-3 rounded bg-rh-positive" />
                   <span className="text-muted-foreground">Subscribed</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded bg-emerald-200" />
+                  <div className="h-3 w-3 rounded bg-rh-positive/30" />
                   <span className="text-muted-foreground">Unsubscribed</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded bg-yellow-400" />
+                  <div className="h-3 w-3 rounded bg-rh-accent-gold" />
                   <span className="text-muted-foreground">Total subscribers</span>
                 </div>
               </div>
@@ -316,7 +316,7 @@ export function EmailDashboard({ dateRange, refreshKey }: EmailDashboardProps) {
                         borderRadius: "8px",
                       }}
                     />
-                    <Bar dataKey="subscribed" fill="#10b981" radius={[4, 4, 0, 0]} name="Subscribed" />
+                    <Bar dataKey="subscribed" fill="#00c853" radius={[4, 4, 0, 0]} name="Subscribed" />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -452,12 +452,12 @@ export function EmailDashboard({ dateRange, refreshKey }: EmailDashboardProps) {
             <CardContent className="pt-5 pb-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-blue-600 dark:text-blue-400">Emails Sent</p>
+                  <p className="text-sm font-medium text-rh-accent dark:text-blue-400">Emails Sent</p>
                   <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">{formatNumber(totals.sent)}</p>
                   <p className="text-xs text-blue-500 dark:text-blue-400">{dateLabel}</p>
                 </div>
                 <div className="rounded-full bg-blue-200/50 p-3 dark:bg-blue-800/30">
-                  <Send className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  <Send className="h-5 w-5 text-rh-accent dark:text-blue-400" />
                 </div>
               </div>
             </CardContent>
@@ -467,12 +467,12 @@ export function EmailDashboard({ dateRange, refreshKey }: EmailDashboardProps) {
             <CardContent className="pt-5 pb-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400">Open Rate</p>
+                  <p className="text-sm font-medium text-rh-positive dark:text-emerald-400">Open Rate</p>
                   <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">{totals.avgOpenRate.toFixed(1)}%</p>
                   <p className="text-xs text-emerald-500 dark:text-emerald-400">{formatNumber(totals.opened)} opened</p>
                 </div>
                 <div className="rounded-full bg-emerald-200/50 p-3 dark:bg-emerald-800/30">
-                  <Eye className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                  <Eye className="h-5 w-5 text-rh-positive dark:text-emerald-400" />
                 </div>
               </div>
             </CardContent>
@@ -497,12 +497,12 @@ export function EmailDashboard({ dateRange, refreshKey }: EmailDashboardProps) {
             <CardContent className="pt-5 pb-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-amber-600 dark:text-amber-400">Bounced</p>
+                  <p className="text-sm font-medium text-rh-accent-gold dark:text-amber-400">Bounced</p>
                   <p className="text-2xl font-bold text-amber-700 dark:text-amber-300">{formatNumber(totals.bounced)}</p>
                   <p className="text-xs text-amber-500 dark:text-amber-400">{avgBounceRate.toFixed(2)}% rate</p>
                 </div>
                 <div className="rounded-full bg-amber-200/50 p-3 dark:bg-amber-800/30">
-                  <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                  <AlertCircle className="h-5 w-5 text-rh-accent-gold dark:text-amber-400" />
                 </div>
               </div>
             </CardContent>
@@ -512,12 +512,12 @@ export function EmailDashboard({ dateRange, refreshKey }: EmailDashboardProps) {
             <CardContent className="pt-5 pb-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-rose-600 dark:text-rose-400">Unsubscribed</p>
+                  <p className="text-sm font-medium text-rh-negative dark:text-rose-400">Unsubscribed</p>
                   <p className="text-2xl font-bold text-rose-700 dark:text-rose-300">{formatNumber(totals.unsubscribed)}</p>
                   <p className="text-xs text-rose-500 dark:text-rose-400">{avgUnsubscribeRate.toFixed(2)}% rate</p>
                 </div>
                 <div className="rounded-full bg-rose-200/50 p-3 dark:bg-rose-800/30">
-                  <UserMinus className="h-5 w-5 text-rose-600 dark:text-rose-400" />
+                  <UserMinus className="h-5 w-5 text-rh-negative dark:text-rose-400" />
                 </div>
               </div>
             </CardContent>
@@ -527,12 +527,12 @@ export function EmailDashboard({ dateRange, refreshKey }: EmailDashboardProps) {
             <CardContent className="pt-5 pb-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-purple-600 dark:text-purple-400">Campaigns</p>
+                  <p className="text-sm font-medium text-rh-accent-gold dark:text-purple-400">Campaigns</p>
                   <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">{campaigns.length}</p>
                   <p className="text-xs text-purple-500 dark:text-purple-400">{dateLabel}</p>
                 </div>
                 <div className="rounded-full bg-purple-200/50 p-3 dark:bg-purple-800/30">
-                  <Mail className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                  <Mail className="h-5 w-5 text-rh-accent-gold dark:text-purple-400" />
                 </div>
               </div>
             </CardContent>
@@ -545,7 +545,7 @@ export function EmailDashboard({ dateRange, refreshKey }: EmailDashboardProps) {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-base">
-                <div className="h-2 w-2 rounded-full bg-emerald-500" />
+                <div className="h-2 w-2 rounded-full bg-rh-positive" />
                 Engagement Trends
               </CardTitle>
             </CardHeader>
@@ -569,17 +569,17 @@ export function EmailDashboard({ dateRange, refreshKey }: EmailDashboardProps) {
                         type="monotone"
                         dataKey="openRate"
                         name="Open Rate"
-                        stroke="#10b981"
+                        stroke="#00c853"
                         strokeWidth={2}
-                        dot={{ fill: '#10b981', strokeWidth: 0, r: 3 }}
+                        dot={{ fill: '#00c853', strokeWidth: 0, r: 3 }}
                       />
                       <Line
                         type="monotone"
                         dataKey="clickRate"
                         name="Click Rate"
-                        stroke="#3b82f6"
+                        stroke="#ff6b35"
                         strokeWidth={2}
-                        dot={{ fill: '#3b82f6', strokeWidth: 0, r: 3 }}
+                        dot={{ fill: '#ff6b35', strokeWidth: 0, r: 3 }}
                       />
                     </LineChart>
                   </ResponsiveContainer>
@@ -597,7 +597,7 @@ export function EmailDashboard({ dateRange, refreshKey }: EmailDashboardProps) {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-base">
-                <div className="h-2 w-2 rounded-full bg-purple-500" />
+                <div className="h-2 w-2 rounded-full bg-rh-accent-gold" />
                 Emails Sent by Campaign
               </CardTitle>
             </CardHeader>
@@ -625,7 +625,7 @@ export function EmailDashboard({ dateRange, refreshKey }: EmailDashboardProps) {
                           borderRadius: "8px",
                         }}
                       />
-                      <Bar dataKey="sent" fill="#8b5cf6" radius={[0, 4, 4, 0]} />
+                      <Bar dataKey="sent" fill="#d4af37" radius={[0, 4, 4, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 ) : (
@@ -644,7 +644,7 @@ export function EmailDashboard({ dateRange, refreshKey }: EmailDashboardProps) {
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
-            <div className="h-2 w-2 rounded-full bg-amber-500" />
+            <div className="h-2 w-2 rounded-full bg-rh-accent" />
             Recent Campaigns
           </CardTitle>
         </CardHeader>
@@ -683,13 +683,13 @@ export function EmailDashboard({ dateRange, refreshKey }: EmailDashboardProps) {
                         </td>
                         <td className="text-right py-3 px-2">{campaign.sent.toLocaleString()}</td>
                         <td className="text-right py-3 px-2">
-                          <span className="text-emerald-600 font-medium">{campaign.openRate.toFixed(1)}%</span>
+                          <span className="text-rh-positive font-medium">{campaign.openRate.toFixed(1)}%</span>
                         </td>
                         <td className="text-right py-3 px-2">
-                          <span className="text-blue-600 font-medium">{campaign.clickRate.toFixed(1)}%</span>
+                          <span className="text-rh-accent font-medium">{campaign.clickRate.toFixed(1)}%</span>
                         </td>
                         <td className="text-right py-3 px-2">
-                          <span className={campaignRevenue > 0 ? "text-green-600 font-semibold" : "text-muted-foreground"}>
+                          <span className={campaignRevenue > 0 ? "text-rh-positive font-semibold" : "text-muted-foreground"}>
                             {campaignRevenue > 0 ? formatCurrency(campaignRevenue) : "—"}
                           </span>
                         </td>

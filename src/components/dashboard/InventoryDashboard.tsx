@@ -514,17 +514,17 @@ export function InventoryDashboard() {
       l.sku?.toLowerCase().includes(shopifySearch.toLowerCase())
   )
 
-  // Get urgency color
+  // Get urgency color (Robinhood palette)
   const getUrgencyColor = (urgency: string) => {
     switch (urgency) {
       case "critical":
-        return "bg-red-500/10 text-red-500 border-red-500/30"
+        return "bg-rh-negative/10 text-rh-negative border-rh-negative/30"
       case "high":
-        return "bg-orange-500/10 text-orange-500 border-orange-500/30"
+        return "bg-rh-accent/10 text-rh-accent border-rh-accent/30"
       case "medium":
-        return "bg-yellow-500/10 text-yellow-500 border-yellow-500/30"
+        return "bg-rh-accent-gold/10 text-rh-accent-gold border-rh-accent-gold/30"
       default:
-        return "bg-blue-500/10 text-blue-500 border-blue-500/30"
+        return "bg-rh-positive/10 text-rh-positive border-rh-positive/30"
     }
   }
 
@@ -533,49 +533,49 @@ export function InventoryDashboard() {
       {/* Summary Cards */}
       {summary && (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          <Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border-blue-500/20">
+          <Card className="bg-rh-card border-border/40">
             <CardContent className="pt-4">
-              <div className="flex items-center gap-2 text-blue-500">
+              <div className="flex items-center gap-2 text-rh-accent">
                 <Package size={18} />
                 <span className="text-xs font-medium">Shopify Products</span>
               </div>
-              <p className="text-2xl font-bold mt-1">{summary.totalShopifyProducts}</p>
+              <p className="text-2xl font-bold mt-1 text-foreground">{summary.totalShopifyProducts}</p>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 border-purple-500/20">
+          <Card className="bg-rh-card border-border/40">
             <CardContent className="pt-4">
-              <div className="flex items-center gap-2 text-purple-500">
+              <div className="flex items-center gap-2 text-rh-accent-gold">
                 <Box size={18} />
                 <span className="text-xs font-medium">Raw Materials</span>
               </div>
-              <p className="text-2xl font-bold mt-1">{summary.totalRawMaterials}</p>
+              <p className="text-2xl font-bold mt-1 text-foreground">{summary.totalRawMaterials}</p>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-amber-500/10 to-amber-600/5 border-amber-500/20">
+          <Card className="bg-rh-card border-border/40">
             <CardContent className="pt-4">
-              <div className="flex items-center gap-2 text-amber-500">
+              <div className="flex items-center gap-2 text-rh-accent-gold">
                 <TrendingDown size={18} />
                 <span className="text-xs font-medium">Low Stock Items</span>
               </div>
-              <p className="text-2xl font-bold mt-1">{summary.lowStockProducts + summary.lowStockMaterials}</p>
+              <p className="text-2xl font-bold mt-1 text-foreground">{summary.lowStockProducts + summary.lowStockMaterials}</p>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-red-500/10 to-red-600/5 border-red-500/20">
+          <Card className="bg-rh-card border-border/40">
             <CardContent className="pt-4">
-              <div className="flex items-center gap-2 text-red-500">
+              <div className="flex items-center gap-2 text-rh-negative">
                 <AlertTriangle size={18} />
                 <span className="text-xs font-medium">Active Alerts</span>
               </div>
-              <p className="text-2xl font-bold mt-1">{summary.activeAlerts}</p>
+              <p className="text-2xl font-bold mt-1 text-foreground">{summary.activeAlerts}</p>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-green-500/10 to-green-600/5 border-green-500/20 col-span-2">
+          <Card className="bg-rh-card border-border/40 col-span-2">
             <CardContent className="pt-4">
-              <div className="flex items-center gap-2 text-green-500">
+              <div className="flex items-center gap-2 text-rh-positive">
                 <Warehouse size={18} />
                 <span className="text-xs font-medium">Total Inventory Value</span>
               </div>
-              <p className="text-2xl font-bold mt-1">
+              <p className="text-2xl font-bold mt-1 text-foreground">
                 ${summary.totalInventoryValue?.toLocaleString(undefined, { minimumFractionDigits: 2 }) || "0.00"}
               </p>
             </CardContent>

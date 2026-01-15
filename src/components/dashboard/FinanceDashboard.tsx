@@ -185,10 +185,10 @@ export function FinanceDashboard({ dateRange, refreshKey }: FinanceDashboardProp
   }
 
   const getAccountIcon = (type: string, subtype: string) => {
-    if (type === "credit") return <CreditCard size={16} className="text-red-500" />
-    if (subtype === "checking") return <Building2 size={16} className="text-blue-500" />
-    if (subtype === "savings") return <PiggyBank size={16} className="text-green-500" />
-    return <Landmark size={16} className="text-gray-500" />
+    if (type === "credit") return <CreditCard size={16} className="text-rh-negative" />
+    if (subtype === "checking") return <Building2 size={16} className="text-rh-accent" />
+    if (subtype === "savings") return <PiggyBank size={16} className="text-rh-positive" />
+    return <Landmark size={16} className="text-muted-foreground" />
   }
 
   const handleUnlinkAccount = async (accountId: string) => {
@@ -325,8 +325,8 @@ export function FinanceDashboard({ dateRange, refreshKey }: FinanceDashboardProp
   if (!configured) {
     return (
       <div className="flex h-96 flex-col items-center justify-center gap-6">
-        <div className="rounded-full bg-blue-100 p-6">
-          <Landmark className="h-12 w-12 text-blue-600" />
+        <div className="rounded-full bg-rh-accent/10 p-6">
+          <Landmark className="h-12 w-12 text-rh-accent" />
         </div>
         <div className="text-center">
           <h2 className="text-xl font-semibold">Connect Your Bank Accounts</h2>
@@ -367,7 +367,7 @@ export function FinanceDashboard({ dateRange, refreshKey }: FinanceDashboardProp
         <Card className="lg:row-span-2">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
-              <Wallet size={18} className="text-blue-600" />
+              <Wallet size={18} className="text-rh-accent" />
               Operating Cash
             </CardTitle>
             <p className="text-xs text-muted-foreground mt-1">
@@ -380,24 +380,24 @@ export function FinanceDashboard({ dateRange, refreshKey }: FinanceDashboardProp
               <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-2">
                 Starting Balance
               </p>
-              <div className="flex justify-between items-center py-2.5 px-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+              <div className="flex justify-between items-center py-2.5 px-3 rounded-lg bg-rh-accent/10 border border-rh-accent/20">
                 <div>
                   <span className="text-sm font-medium">Mercury Operations</span>
                   <span className="text-xs text-muted-foreground ml-1.5">•••8705</span>
                 </div>
-                <span className="font-bold tabular-nums text-blue-600">{fmt(operationsBalance)}</span>
+                <span className="font-bold tabular-nums text-rh-accent">{fmt(operationsBalance)}</span>
               </div>
             </div>
 
             {/* Money Coming In */}
             <div>
-              <p className="text-[10px] font-medium text-green-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <p className="text-[10px] font-medium text-rh-positive uppercase tracking-wider mb-2 flex items-center gap-1.5">
                 <ArrowDownLeft size={10} />
                 Money Coming In
               </p>
               <div className="space-y-1.5">
                 {totalShopifyIncoming > 0 && (
-                  <div className="flex justify-between items-center py-2 px-3 rounded-lg bg-green-500/5 border border-green-500/10">
+                  <div className="flex justify-between items-center py-2 px-3 rounded-lg bg-rh-positive/5 border border-rh-positive/10">
                     <div>
                       <span className="text-sm">Shopify Payouts</span>
                       <p className="text-[10px] text-muted-foreground">
@@ -408,16 +408,16 @@ export function FinanceDashboard({ dateRange, refreshKey }: FinanceDashboardProp
                         ].filter(Boolean).join(' · ')}
                       </p>
                     </div>
-                    <span className="font-semibold tabular-nums text-green-600">+{fmt(totalShopifyIncoming)}</span>
+                    <span className="font-semibold tabular-nums text-rh-positive">+{fmt(totalShopifyIncoming)}</span>
                   </div>
                 )}
                 {pendingCredits > 0 && (
-                  <div className="flex justify-between items-center py-2 px-3 rounded-lg bg-green-500/5 border border-green-500/10">
+                  <div className="flex justify-between items-center py-2 px-3 rounded-lg bg-rh-positive/5 border border-rh-positive/10">
                     <div>
                       <span className="text-sm">Pending Deposits</span>
                       <p className="text-[10px] text-muted-foreground">Refunds, transfers incoming</p>
                     </div>
-                    <span className="font-semibold tabular-nums text-green-600">+{fmt(pendingCredits)}</span>
+                    <span className="font-semibold tabular-nums text-rh-positive">+{fmt(pendingCredits)}</span>
                   </div>
                 )}
                 {totalShopifyIncoming === 0 && pendingCredits === 0 && (
@@ -428,45 +428,45 @@ export function FinanceDashboard({ dateRange, refreshKey }: FinanceDashboardProp
 
             {/* Money Going Out */}
             <div>
-              <p className="text-[10px] font-medium text-red-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <p className="text-[10px] font-medium text-rh-negative uppercase tracking-wider mb-2 flex items-center gap-1.5">
                 <ArrowUpRight size={10} />
                 Obligations to Pay
               </p>
               <div className="space-y-1.5">
                 {pendingCharges > 0 && (
-                  <div className="flex justify-between items-center py-2 px-3 rounded-lg bg-red-500/5 border border-red-500/10">
+                  <div className="flex justify-between items-center py-2 px-3 rounded-lg bg-rh-negative/5 border border-rh-negative/10">
                     <div>
                       <span className="text-sm">Pending Charges</span>
                       <p className="text-[10px] text-muted-foreground">Processing transactions</p>
                     </div>
-                    <span className="font-semibold tabular-nums text-red-500">−{fmt(pendingCharges)}</span>
+                    <span className="font-semibold tabular-nums text-rh-negative">−{fmt(pendingCharges)}</span>
                   </div>
                 )}
                 {creditBalance > 0 && (
-                  <div className="flex justify-between items-center py-2 px-3 rounded-lg bg-red-500/5 border border-red-500/10">
+                  <div className="flex justify-between items-center py-2 px-3 rounded-lg bg-rh-negative/5 border border-rh-negative/10">
                     <div>
                       <span className="text-sm">Credit Cards</span>
                       <p className="text-[10px] text-muted-foreground">Outstanding balance owed</p>
                     </div>
-                    <span className="font-semibold tabular-nums text-red-500">−{fmt(creditBalance)}</span>
+                    <span className="font-semibold tabular-nums text-rh-negative">−{fmt(creditBalance)}</span>
                   </div>
                 )}
                 {shopifyBilling > 0 && (
-                  <div className="flex justify-between items-center py-2 px-3 rounded-lg bg-red-500/5 border border-red-500/10">
+                  <div className="flex justify-between items-center py-2 px-3 rounded-lg bg-rh-negative/5 border border-rh-negative/10">
                     <div>
                       <span className="text-sm">Shopify Bill</span>
                       <p className="text-[10px] text-muted-foreground">Apps, shipping labels, fees</p>
                     </div>
-                    <span className="font-semibold tabular-nums text-red-500">−{fmt(shopifyBilling)}</span>
+                    <span className="font-semibold tabular-nums text-rh-negative">−{fmt(shopifyBilling)}</span>
                   </div>
                 )}
                 {metaBilling > 0 && (
-                  <div className="flex justify-between items-center py-2 px-3 rounded-lg bg-red-500/5 border border-red-500/10">
+                  <div className="flex justify-between items-center py-2 px-3 rounded-lg bg-rh-negative/5 border border-rh-negative/10">
                     <div>
                       <span className="text-sm">Meta Ads</span>
                       <p className="text-[10px] text-muted-foreground">Current ad spend balance</p>
                     </div>
-                    <span className="font-semibold tabular-nums text-red-500">−{fmt(metaBilling)}</span>
+                    <span className="font-semibold tabular-nums text-rh-negative">−{fmt(metaBilling)}</span>
                   </div>
                 )}
                 {pendingCharges === 0 && creditBalance === 0 && shopifyBilling === 0 && metaBilling === 0 && (
@@ -482,7 +482,7 @@ export function FinanceDashboard({ dateRange, refreshKey }: FinanceDashboardProp
                   <span className="font-semibold">Operating Cash</span>
                   <p className="text-[10px] text-muted-foreground">After all settles</p>
                 </div>
-                <span className={`text-2xl font-bold tabular-nums ${operatingCash >= 0 ? "text-green-600" : "text-red-600"}`}>
+                <span className={`text-2xl font-bold tabular-nums ${operatingCash >= 0 ? "text-rh-positive" : "text-rh-negative"}`}>
                   {fmt(operatingCash)}
                 </span>
               </div>
@@ -517,7 +517,7 @@ export function FinanceDashboard({ dateRange, refreshKey }: FinanceDashboardProp
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
-              <Users size={18} className="text-purple-600" />
+              <Users size={18} className="text-rh-accent-gold" />
               Payroll Runway
             </CardTitle>
           </CardHeader>
@@ -534,9 +534,9 @@ Weekly = Avg Payroll (${fmt(avgPayrollPerRun)}) ÷ 2
             >
               <div className="flex items-baseline gap-2 cursor-help">
                 <p className={`text-4xl font-bold ${
-                  payrollRunwayWeeks < 4 ? "text-red-600" :
-                  payrollRunwayWeeks < 8 ? "text-amber-600" :
-                  "text-green-600"
+                  payrollRunwayWeeks < 4 ? "text-rh-negative" :
+                  payrollRunwayWeeks < 8 ? "text-rh-accent-gold" :
+                  "text-rh-positive"
                 }`}>
                   {payrollRunwayWeeks > 52 ? "52+" : payrollRunwayWeeks}
                 </p>
@@ -548,9 +548,9 @@ Weekly = Avg Payroll (${fmt(avgPayrollPerRun)}) ÷ 2
             </p>
 
             {payrollRunwayWeeks < 8 && (
-              <div className="mt-3 p-2 rounded-lg bg-amber-50 border border-amber-200 flex items-start gap-2">
-                <AlertTriangle size={16} className="text-amber-600 mt-0.5 flex-shrink-0" />
-                <p className="text-sm text-amber-800">
+              <div className="mt-3 p-2 rounded-lg bg-rh-accent-gold/10 border border-rh-accent-gold/30 flex items-start gap-2">
+                <AlertTriangle size={16} className="text-rh-accent-gold mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-rh-accent-gold">
                   {payrollRunwayWeeks < 4
                     ? "Critical: Less than 1 month of payroll runway"
                     : "Warning: Less than 2 months of payroll runway"}
@@ -606,7 +606,7 @@ Weekly = Avg Payroll (${fmt(avgPayrollPerRun)}) ÷ 2
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Credit Owed</p>
-                <p className="text-lg font-bold text-red-600">{fmt(creditBalance)}</p>
+                <p className="text-lg font-bold text-rh-negative">{fmt(creditBalance)}</p>
               </div>
             </div>
 
@@ -629,7 +629,7 @@ Weekly = Avg Payroll (${fmt(avgPayrollPerRun)}) ÷ 2
                           <p className="text-sm font-medium truncate">
                             {account.name}
                             {roleLabel && (
-                              <span className="ml-1.5 text-xs font-normal text-blue-600">
+                              <span className="ml-1.5 text-xs font-normal text-rh-accent">
                                 ({roleLabel})
                               </span>
                             )}
@@ -638,7 +638,7 @@ Weekly = Avg Payroll (${fmt(avgPayrollPerRun)}) ÷ 2
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className={`font-medium ${account.type === "credit" ? "text-red-600" : ""}`}>
+                        <span className={`font-medium ${account.type === "credit" ? "text-rh-negative" : ""}`}>
                           {fmtDecimal(account.balances.current)}
                         </span>
                         <Button
@@ -707,7 +707,7 @@ Weekly = Avg Payroll (${fmt(avgPayrollPerRun)}) ÷ 2
               className="flex items-center justify-between w-full"
             >
               <CardTitle className="text-base flex items-center gap-2">
-                <Clock size={18} className="text-amber-600" />
+                <Clock size={18} className="text-rh-accent-gold" />
                 Pending Transactions
                 <span className="text-sm font-normal text-muted-foreground">
                   ({pendingTransactions.length})
@@ -715,10 +715,10 @@ Weekly = Avg Payroll (${fmt(avgPayrollPerRun)}) ÷ 2
               </CardTitle>
               <div className="flex items-center gap-4 text-sm">
                 {pendingCredits > 0 && (
-                  <span className="text-green-600">+{fmt(pendingCredits)} in</span>
+                  <span className="text-rh-positive">+{fmt(pendingCredits)} in</span>
                 )}
                 {pendingCharges > 0 && (
-                  <span className="text-red-600">-{fmt(pendingCharges)} out</span>
+                  <span className="text-rh-negative">-{fmt(pendingCharges)} out</span>
                 )}
                 {showPending ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
               </div>
@@ -732,14 +732,14 @@ Weekly = Avg Payroll (${fmt(avgPayrollPerRun)}) ÷ 2
                   return (
                     <div
                       key={tx.transaction_id}
-                      className="flex items-center justify-between p-2 rounded-lg border bg-amber-50/30"
+                      className="flex items-center justify-between p-2 rounded-lg border bg-rh-accent-gold/5"
                     >
                       <div className="flex items-center gap-2 min-w-0">
-                        <div className={`p-1 rounded-full ${isIncome ? "bg-green-100" : "bg-red-100"}`}>
+                        <div className={`p-1 rounded-full ${isIncome ? "bg-rh-positive/10" : "bg-rh-negative/10"}`}>
                           {isIncome ? (
-                            <ArrowDownLeft size={12} className="text-green-600" />
+                            <ArrowDownLeft size={12} className="text-rh-positive" />
                           ) : (
-                            <ArrowUpRight size={12} className="text-red-600" />
+                            <ArrowUpRight size={12} className="text-rh-negative" />
                           )}
                         </div>
                         <div className="min-w-0">
@@ -747,7 +747,7 @@ Weekly = Avg Payroll (${fmt(avgPayrollPerRun)}) ÷ 2
                           <p className="text-xs text-muted-foreground">{fmtDate(tx.date)}</p>
                         </div>
                       </div>
-                      <span className={`font-medium text-sm ${isIncome ? "text-green-600" : "text-red-600"}`}>
+                      <span className={`font-medium text-sm ${isIncome ? "text-rh-positive" : "text-rh-negative"}`}>
                         {isIncome ? "+" : "-"}{fmtDecimal(Math.abs(tx.amount))}
                       </span>
                     </div>

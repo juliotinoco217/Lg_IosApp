@@ -479,10 +479,10 @@ export function MetaDashboard() {
   // Ad Card component
   const AdCardComponent = ({ ad }: { ad: AdCard }) => {
     const statusColors: Record<string, string> = {
-      ACTIVE: "bg-green-100 text-green-700",
-      PAUSED: "bg-yellow-100 text-yellow-700",
-      DELETED: "bg-red-100 text-red-700",
-      ARCHIVED: "bg-gray-100 text-gray-700",
+      ACTIVE: "bg-rh-positive/10 text-rh-positive",
+      PAUSED: "bg-rh-accent-gold/10 text-rh-accent-gold",
+      DELETED: "bg-rh-negative/10 text-rh-negative",
+      ARCHIVED: "bg-muted text-muted-foreground",
     }
 
     return (
@@ -536,7 +536,7 @@ export function MetaDashboard() {
             </div>
             <div>
               <p className="text-muted-foreground">ROAS</p>
-              <p className={`font-semibold ${ad.metrics.roas >= 1 ? "text-green-600" : "text-red-600"}`}>
+              <p className={`font-semibold ${ad.metrics.roas >= 1 ? "text-rh-positive" : "text-rh-negative"}`}>
                 {formatRoas(ad.metrics.roas)}
               </p>
             </div>
@@ -608,8 +608,8 @@ export function MetaDashboard() {
   if (!configured) {
     return (
       <div className="flex h-96 flex-col items-center justify-center gap-6">
-        <div className="rounded-full bg-blue-100 p-6">
-          <BarChart3 className="h-12 w-12 text-blue-600" />
+        <div className="rounded-full bg-rh-accent/10 p-6">
+          <BarChart3 className="h-12 w-12 text-rh-accent" />
         </div>
         <div className="text-center">
           <h2 className="text-xl font-semibold">Connect Meta Ads</h2>
@@ -634,7 +634,7 @@ export function MetaDashboard() {
                 href="https://developers.facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
+                className="text-rh-accent hover:underline"
               >
                 Meta for Developers
               </a>
@@ -1524,7 +1524,7 @@ export function MetaDashboard() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-2xl font-bold text-green-600">{formatNumber(overview.kpis.purchases)}</p>
+                <p className="text-2xl font-bold text-rh-positive">{formatNumber(overview.kpis.purchases)}</p>
                 <p className="text-xs text-muted-foreground">Total Purchases</p>
               </div>
             </div>
@@ -1570,7 +1570,7 @@ export function MetaDashboard() {
                           <div className="inline-flex items-center gap-1">
                             <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{convRate}%</span>
                             {Number(dropOff) > 50 && (
-                              <span className="text-xs text-red-500">↓{dropOff}%</span>
+                              <span className="text-xs text-rh-negative">↓{dropOff}%</span>
                             )}
                           </div>
                         )}
@@ -1590,7 +1590,7 @@ export function MetaDashboard() {
             <div className="mt-6 pt-4 border-t grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 text-center">
                 <p className="text-xs text-muted-foreground mb-1">Click Rate</p>
-                <p className="text-xl font-bold text-blue-600">{formatPercent(overview.kpis.ctr)}</p>
+                <p className="text-xl font-bold text-rh-accent">{formatPercent(overview.kpis.ctr)}</p>
               </div>
               <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 text-center">
                 <p className="text-xs text-muted-foreground mb-1">Landing → Cart</p>
@@ -1610,7 +1610,7 @@ export function MetaDashboard() {
               </div>
               <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 text-center">
                 <p className="text-xs text-muted-foreground mb-1">Overall Rate</p>
-                <p className="text-xl font-bold text-green-600">
+                <p className="text-xl font-bold text-rh-positive">
                   {overview.kpis.impressions > 0
                     ? `${((overview.kpis.purchases / overview.kpis.impressions) * 100).toFixed(3)}%`
                     : "0%"}
@@ -1788,19 +1788,19 @@ export function MetaDashboard() {
                       key={idx}
                       className={`flex items-start gap-3 rounded-lg p-3 ${
                         insight.type === "success"
-                          ? "bg-green-50 dark:bg-green-950/20"
+                          ? "bg-rh-positive/5 dark:bg-rh-positive/10"
                           : insight.type === "warning"
-                          ? "bg-amber-50 dark:bg-amber-950/20"
-                          : "bg-blue-50 dark:bg-blue-950/20"
+                          ? "bg-rh-accent-gold/5 dark:bg-rh-accent-gold/10"
+                          : "bg-rh-accent/5 dark:bg-rh-accent/10"
                       }`}
                     >
                       <div
                         className={`mt-0.5 flex h-5 w-5 items-center justify-center rounded-full ${
                           insight.type === "success"
-                            ? "bg-green-500"
+                            ? "bg-rh-positive"
                             : insight.type === "warning"
-                            ? "bg-amber-500"
-                            : "bg-blue-500"
+                            ? "bg-rh-accent-gold"
+                            : "bg-rh-accent"
                         }`}
                       >
                         {insight.type === "success" && <CheckCircle2 className="h-3 w-3 text-white" />}
@@ -1810,10 +1810,10 @@ export function MetaDashboard() {
                       <p
                         className={`text-sm ${
                           insight.type === "success"
-                            ? "text-green-800 dark:text-green-300"
+                            ? "text-rh-positive dark:text-rh-positive"
                             : insight.type === "warning"
-                            ? "text-amber-800 dark:text-amber-300"
-                            : "text-blue-800 dark:text-blue-300"
+                            ? "text-rh-accent-gold dark:text-rh-accent-gold"
+                            : "text-rh-accent dark:text-rh-accent"
                         }`}
                       >
                         {insight.message}
@@ -1851,7 +1851,7 @@ export function MetaDashboard() {
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium truncate max-w-[200px]">{campaign.name}</span>
                         <div className="flex items-center gap-4 text-xs">
-                          <span className={`font-semibold ${campaign.metrics.roas >= 1 ? "text-green-600" : "text-red-600"}`}>
+                          <span className={`font-semibold ${campaign.metrics.roas >= 1 ? "text-rh-positive" : "text-rh-negative"}`}>
                             {formatRoas(campaign.metrics.roas)} ROAS
                           </span>
                           <span>{campaign.metrics.purchases} sales</span>
@@ -1861,7 +1861,7 @@ export function MetaDashboard() {
                         {/* Spend bar */}
                         <div className="flex-1 bg-gray-100 rounded overflow-hidden">
                           <div
-                            className="h-full bg-red-400 flex items-center justify-end pr-2"
+                            className="h-full bg-rh-negative flex items-center justify-end pr-2"
                             style={{ width: maxSpend > 0 ? `${(campaign.metrics.spend / maxSpend) * 100}%` : "0%" }}
                           >
                             <span className="text-[10px] text-white font-medium">
@@ -1872,7 +1872,7 @@ export function MetaDashboard() {
                         {/* Revenue bar */}
                         <div className="flex-1 bg-gray-100 rounded overflow-hidden">
                           <div
-                            className="h-full bg-green-500 flex items-center pl-2"
+                            className="h-full bg-rh-positive flex items-center pl-2"
                             style={{ width: maxRevenue > 0 ? `${(campaign.metrics.revenue / maxRevenue) * 100}%` : "0%" }}
                           >
                             <span className="text-[10px] text-white font-medium">
@@ -1886,11 +1886,11 @@ export function MetaDashboard() {
                   {/* Legend */}
                   <div className="flex justify-center gap-6 pt-2 border-t mt-4">
                     <div className="flex items-center gap-2 text-xs">
-                      <div className="w-3 h-3 rounded bg-red-400" />
+                      <div className="w-3 h-3 rounded bg-rh-negative" />
                       <span className="text-muted-foreground">Spend</span>
                     </div>
                     <div className="flex items-center gap-2 text-xs">
-                      <div className="w-3 h-3 rounded bg-green-500" />
+                      <div className="w-3 h-3 rounded bg-rh-positive" />
                       <span className="text-muted-foreground">Revenue</span>
                     </div>
                   </div>
@@ -1906,9 +1906,9 @@ export function MetaDashboard() {
         <CardHeader className="cursor-pointer" onClick={() => setCampaignsCollapsed(!campaignsCollapsed)}>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2 text-base">
-              <Layers className="h-5 w-5 text-blue-600" />
+              <Layers className="h-5 w-5 text-rh-accent" />
               Ad Campaigns
-              <span className="ml-2 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
+              <span className="ml-2 rounded-full bg-rh-accent/10 px-2 py-0.5 text-xs font-medium text-rh-accent">
                 {campaigns.length}
               </span>
             </CardTitle>
@@ -2010,7 +2010,7 @@ export function MetaDashboard() {
                   {sortedCampaigns.map((campaign) => (
                     <React.Fragment key={campaign.id}>
                       <tr
-                        className={`hover:bg-gray-50/50 transition-colors cursor-pointer ${expandedCampaigns.has(campaign.id) ? "bg-blue-50/50" : ""}`}
+                        className={`hover:bg-gray-50/50 transition-colors cursor-pointer ${expandedCampaigns.has(campaign.id) ? "bg-rh-accent/5/50" : ""}`}
                         onClick={() => toggleCampaignExpansion(campaign.id)}
                       >
                         <td className="px-4 py-3">
@@ -2038,13 +2038,13 @@ export function MetaDashboard() {
                               <Layers className="h-4 w-4" />
                             </div>
                             <div
-                              className="cursor-pointer hover:text-blue-600"
+                              className="cursor-pointer hover:text-rh-accent"
                               onClick={(e) => {
                                 e.stopPropagation()
                                 openCampaignDrawer(campaign)
                               }}
                             >
-                              <p className="font-medium text-gray-900 max-w-[200px] truncate hover:text-blue-600">{campaign.name}</p>
+                              <p className="font-medium text-gray-900 max-w-[200px] truncate hover:text-rh-accent">{campaign.name}</p>
                               <p className="text-xs text-gray-500">{campaign.objective || "Traffic"}</p>
                             </div>
                           </div>
@@ -2052,7 +2052,7 @@ export function MetaDashboard() {
                         <td className="px-4 py-3 text-center">
                           <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${
                             campaign.status === "ACTIVE"
-                              ? "bg-green-100 text-green-700"
+                              ? "bg-rh-positive/10 text-rh-positive"
                               : campaign.status === "PAUSED"
                               ? "bg-yellow-100 text-yellow-700"
                               : "bg-gray-100 text-gray-700"
@@ -2067,14 +2067,14 @@ export function MetaDashboard() {
                           {formatCurrency(campaign.metrics.spend)}
                         </td>
                         <td className="px-4 py-3 text-right">
-                          <span className={`font-semibold ${campaign.metrics.roas >= 1 ? "text-green-600" : "text-red-600"}`}>
+                          <span className={`font-semibold ${campaign.metrics.roas >= 1 ? "text-rh-positive" : "text-rh-negative"}`}>
                             {formatRoas(campaign.metrics.roas)}
                           </span>
                         </td>
                         <td className="px-4 py-3 text-right font-medium">
                           {campaign.metrics.purchases}
                         </td>
-                        <td className="px-4 py-3 text-right font-medium text-green-600">
+                        <td className="px-4 py-3 text-right font-medium text-rh-positive">
                           {formatCurrency(campaign.metrics.revenue)}
                         </td>
                         <td className="px-4 py-3 text-right">
@@ -2152,7 +2152,7 @@ export function MetaDashboard() {
                                           <div>
                                             <p className="font-medium text-sm text-gray-900">{adset.name}</p>
                                             <span className={`inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-medium ${
-                                              adset.status === "ACTIVE" ? "bg-green-100 text-green-700" :
+                                              adset.status === "ACTIVE" ? "bg-rh-positive/10 text-rh-positive" :
                                               adset.status === "PAUSED" ? "bg-yellow-100 text-yellow-700" :
                                               "bg-gray-100 text-gray-600"
                                             }`}>
@@ -2167,7 +2167,7 @@ export function MetaDashboard() {
                                           </div>
                                           <div className="text-right">
                                             <p className="text-xs text-gray-500">ROAS</p>
-                                            <p className={`font-medium ${(adset.metrics?.roas || 0) >= 1 ? "text-green-600" : "text-red-600"}`}>
+                                            <p className={`font-medium ${(adset.metrics?.roas || 0) >= 1 ? "text-rh-positive" : "text-rh-negative"}`}>
                                               {formatRoas(adset.metrics?.roas || 0)}
                                             </p>
                                           </div>
@@ -2177,7 +2177,7 @@ export function MetaDashboard() {
                                           </div>
                                           <div className="text-right">
                                             <p className="text-xs text-gray-500">Revenue</p>
-                                            <p className="font-medium text-green-600">{formatCurrency(adset.metrics?.revenue || 0)}</p>
+                                            <p className="font-medium text-rh-positive">{formatCurrency(adset.metrics?.revenue || 0)}</p>
                                           </div>
                                         </div>
                                       </div>
@@ -2189,7 +2189,7 @@ export function MetaDashboard() {
                                   {inlineAds.length > 0 && (
                                     <div className="space-y-2">
                                       <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-2">
-                                        <Image className="h-3.5 w-3.5 text-purple-500" />
+                                        <Image className="h-3.5 w-3.5 text-rh-accent-gold" />
                                         Ads ({inlineAds.length})
                                       </p>
                                       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
@@ -2221,7 +2221,7 @@ export function MetaDashboard() {
                                                 </div>
                                               )}
                                               <span className={`absolute left-1.5 top-1.5 rounded-full px-1.5 py-0.5 text-[9px] font-medium ${
-                                                ad.status === "ACTIVE" ? "bg-green-100 text-green-700" :
+                                                ad.status === "ACTIVE" ? "bg-rh-positive/10 text-rh-positive" :
                                                 ad.status === "PAUSED" ? "bg-yellow-100 text-yellow-700" :
                                                 "bg-gray-100 text-gray-700"
                                               }`}>
@@ -2237,7 +2237,7 @@ export function MetaDashboard() {
                                               <p className="text-[11px] font-medium truncate text-gray-900">{ad.name}</p>
                                               <div className="flex justify-between mt-1 text-[10px]">
                                                 <span className="text-gray-500">{formatCurrency(ad.metrics.spend)}</span>
-                                                <span className={ad.metrics.roas >= 1 ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
+                                                <span className={ad.metrics.roas >= 1 ? "text-rh-positive font-medium" : "text-rh-negative font-medium"}>
                                                   {formatRoas(ad.metrics.roas)}
                                                 </span>
                                               </div>
@@ -2292,13 +2292,13 @@ export function MetaDashboard() {
                         const totalSpend = sortedCampaigns.reduce((sum, c) => sum + c.metrics.spend, 0)
                         const totalRevenue = sortedCampaigns.reduce((sum, c) => sum + c.metrics.revenue, 0)
                         const avgRoas = totalSpend > 0 ? totalRevenue / totalSpend : 0
-                        return <span className={avgRoas >= 1 ? "text-green-600" : "text-red-600"}>{formatRoas(avgRoas)}</span>
+                        return <span className={avgRoas >= 1 ? "text-rh-positive" : "text-rh-negative"}>{formatRoas(avgRoas)}</span>
                       })()}
                     </td>
                     <td className="px-4 py-3 text-right">
                       {sortedCampaigns.reduce((sum, c) => sum + c.metrics.purchases, 0)}
                     </td>
-                    <td className="px-4 py-3 text-right text-green-600">
+                    <td className="px-4 py-3 text-right text-rh-positive">
                       {formatCurrency(sortedCampaigns.reduce((sum, c) => sum + c.metrics.revenue, 0))}
                     </td>
                     <td className="px-4 py-3 text-right">
@@ -2339,9 +2339,9 @@ export function MetaDashboard() {
         <CardHeader className="cursor-pointer" onClick={() => setAdsCollapsed(!adsCollapsed)}>
           <div className="flex flex-wrap items-center justify-between gap-4">
             <CardTitle className="flex items-center gap-2 text-base">
-              <Image className="h-5 w-5 text-purple-600" />
+              <Image className="h-5 w-5 text-rh-accent-gold" />
               Ads Gallery
-              <span className="ml-2 rounded-full bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-700">
+              <span className="ml-2 rounded-full bg-rh-accent-gold/10 px-2 py-0.5 text-xs font-medium text-rh-accent-gold">
                 {filteredAds.length}
               </span>
             </CardTitle>
@@ -2404,7 +2404,7 @@ export function MetaDashboard() {
                   <Filter className="mr-2 h-4 w-4" />
                   Status
                   {statusFilter.length > 0 && (
-                    <span className="ml-1 rounded-full bg-blue-100 px-1.5 text-xs text-blue-700">
+                    <span className="ml-1 rounded-full bg-rh-accent/10 px-1.5 text-xs text-rh-accent">
                       {statusFilter.length}
                     </span>
                   )}
@@ -2514,7 +2514,7 @@ export function MetaDashboard() {
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">ROAS</p>
-                      <p className={`font-medium ${ad.metrics.roas >= 1 ? "text-green-600" : "text-red-600"}`}>
+                      <p className={`font-medium ${ad.metrics.roas >= 1 ? "text-rh-positive" : "text-rh-negative"}`}>
                         {formatRoas(ad.metrics.roas)}
                       </p>
                     </div>
@@ -2567,7 +2567,7 @@ export function MetaDashboard() {
                 <div className="flex items-center gap-2">
                   <h3 className="font-semibold text-lg">{selectedCampaign.name}</h3>
                   <span className={`rounded px-2 py-0.5 text-xs font-medium ${
-                    selectedCampaign.status === "ACTIVE" ? "bg-green-100 text-green-700" :
+                    selectedCampaign.status === "ACTIVE" ? "bg-rh-positive/10 text-rh-positive" :
                     selectedCampaign.status === "PAUSED" ? "bg-yellow-100 text-yellow-700" :
                     "bg-gray-100 text-gray-700"
                   }`}>
@@ -2601,15 +2601,15 @@ export function MetaDashboard() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="rounded-lg border p-4 bg-gradient-to-br from-blue-50 to-white">
                   <p className="text-xs font-medium text-muted-foreground">Total Spend</p>
-                  <p className="text-2xl font-bold text-blue-600">{formatCurrency(selectedCampaign.metrics.spend)}</p>
+                  <p className="text-2xl font-bold text-rh-accent">{formatCurrency(selectedCampaign.metrics.spend)}</p>
                 </div>
                 <div className="rounded-lg border p-4 bg-gradient-to-br from-green-50 to-white">
                   <p className="text-xs font-medium text-muted-foreground">Revenue</p>
-                  <p className="text-2xl font-bold text-green-600">{formatCurrency(selectedCampaign.metrics.revenue)}</p>
+                  <p className="text-2xl font-bold text-rh-positive">{formatCurrency(selectedCampaign.metrics.revenue)}</p>
                 </div>
                 <div className="rounded-lg border p-4">
                   <p className="text-xs font-medium text-muted-foreground">ROAS</p>
-                  <p className={`text-2xl font-bold ${selectedCampaign.metrics.roas >= 1 ? "text-green-600" : "text-red-600"}`}>
+                  <p className={`text-2xl font-bold ${selectedCampaign.metrics.roas >= 1 ? "text-rh-positive" : "text-rh-negative"}`}>
                     {formatRoas(selectedCampaign.metrics.roas)}
                   </p>
                 </div>
@@ -2672,10 +2672,10 @@ export function MetaDashboard() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-sm">
-                    <Image className="h-4 w-4 text-purple-600" />
+                    <Image className="h-4 w-4 text-rh-accent-gold" />
                     Ads in this Campaign
                     {campaignAds.has(selectedCampaign.id) && (
-                      <span className="ml-2 rounded-full bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-700">
+                      <span className="ml-2 rounded-full bg-rh-accent-gold/10 px-2 py-0.5 text-xs font-medium text-rh-accent-gold">
                         {(campaignAds.get(selectedCampaign.id) || []).filter(ad => !hidePaused || ad.status === "ACTIVE").length}
                       </span>
                     )}
@@ -2724,7 +2724,7 @@ export function MetaDashboard() {
                               </div>
                             )}
                             <span className={`absolute left-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-medium ${
-                              ad.status === "ACTIVE" ? "bg-green-100 text-green-700" :
+                              ad.status === "ACTIVE" ? "bg-rh-positive/10 text-rh-positive" :
                               ad.status === "PAUSED" ? "bg-yellow-100 text-yellow-700" :
                               "bg-gray-100 text-gray-700"
                             }`}>
@@ -2735,7 +2735,7 @@ export function MetaDashboard() {
                             <p className="text-xs font-medium truncate">{ad.name}</p>
                             <div className="flex justify-between mt-1 text-[10px] text-muted-foreground">
                               <span>{formatCurrency(ad.metrics.spend)}</span>
-                              <span className={ad.metrics.roas >= 1 ? "text-green-600" : "text-red-600"}>
+                              <span className={ad.metrics.roas >= 1 ? "text-rh-positive" : "text-rh-negative"}>
                                 {formatRoas(ad.metrics.roas)}
                               </span>
                             </div>
@@ -2823,7 +2823,7 @@ export function MetaDashboard() {
                 <div className="flex items-center gap-2">
                   <h3 className="font-semibold">{selectedAd.name}</h3>
                   <span className={`rounded px-2 py-0.5 text-xs font-medium ${
-                    selectedAd.status === "ACTIVE" ? "bg-green-100 text-green-700" :
+                    selectedAd.status === "ACTIVE" ? "bg-rh-positive/10 text-rh-positive" :
                     selectedAd.status === "PAUSED" ? "bg-yellow-100 text-yellow-700" :
                     "bg-gray-100 text-gray-700"
                   }`}>
@@ -2869,7 +2869,7 @@ export function MetaDashboard() {
                   </div>
                   <div className="flex justify-between py-1 border-b">
                     <span className="text-muted-foreground">ROAS</span>
-                    <span className={`font-medium ${selectedAd.metrics.roas >= 1 ? "text-green-600" : "text-red-600"}`}>
+                    <span className={`font-medium ${selectedAd.metrics.roas >= 1 ? "text-rh-positive" : "text-rh-negative"}`}>
                       {formatRoas(selectedAd.metrics.roas)}
                     </span>
                   </div>
@@ -2956,7 +2956,7 @@ export function MetaDashboard() {
                           href={selectedAd.creative.linkUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-blue-600 hover:underline break-all"
+                          className="text-rh-accent hover:underline break-all"
                         >
                           {selectedAd.creative.linkUrl}
                         </a>

@@ -1,36 +1,33 @@
 import { useState, useEffect, useCallback } from "react"
-import { Layout } from "@/components/layout/Layout"
+import { Layout, pathToSection, sectionDefaultTab } from "@/components/layout/Layout"
+import type { BottomSection } from "@/components/layout/BottomTabBar"
 import { OverviewDashboard } from "@/components/dashboard/OverviewDashboard"
 import { EmailDashboard } from "@/components/dashboard/EmailDashboard"
 import { ProductsDashboard } from "@/components/dashboard/ProductsDashboard"
 import { CustomersDashboard } from "@/components/dashboard/CustomersDashboard"
 import { FinanceDashboard } from "@/components/dashboard/FinanceDashboard"
-import { ForecastingDashboard } from "@/components/dashboard/ForecastingDashboard"
 import { MetaDashboard } from "@/components/dashboard/MetaDashboard"
-import { ShopifyDashboard } from "@/components/dashboard/ShopifyDashboard"
 import { InventoryDashboard } from "@/components/dashboard/InventoryDashboard"
 import { Login } from "@/components/Login"
 import { AuthProvider, useAuth } from "@/context/AuthContext"
 import { RealtimeProvider } from "@/context/RealtimeContext"
 import { apiFetch } from "@/lib/api"
-import { Loader2 } from "lucide-react"
+import { Loader2, Settings } from "lucide-react"
 import type { ShopInfo } from "@/components/layout/Sidebar"
 import type { DateRangeValue } from "@/components/layout/Header"
 import "./index.css"
 
-type Page = "/" | "/email" | "/products" | "/marketing" | "/customers" | "/finance" | "/forecasting" | "/meta" | "/shopify" | "/inventory"
+type Page = "/" | "/email" | "/products" | "/customers" | "/finance" | "/meta" | "/inventory" | "/settings"
 
 const pageConfig: Record<Page, { title: string; subtitle: string }> = {
-  "/": { title: "KPIs", subtitle: "Your e-commerce business at a glance" },
+  "/": { title: "Dashboard", subtitle: "Your e-commerce business at a glance" },
   "/email": { title: "Email & SMS", subtitle: "Marketing performance and subscriber metrics" },
   "/products": { title: "Products", subtitle: "Category profitability and product performance" },
-  "/marketing": { title: "Marketing", subtitle: "Ad performance and acquisition metrics" },
   "/customers": { title: "Customers", subtitle: "Customer behavior, retention, and top products" },
   "/finance": { title: "Finance", subtitle: "Cash flow, accounts, and transactions" },
-  "/forecasting": { title: "Forecasting", subtitle: "Revenue targets, pacing, and catch-up planning" },
   "/meta": { title: "Meta Ads", subtitle: "Campaign performance, ad creatives, and insights" },
-  "/shopify": { title: "Shopify", subtitle: "Store sales, orders, and customer metrics" },
   "/inventory": { title: "Inventory", subtitle: "Stock levels, raw materials, and reorder alerts" },
+  "/settings": { title: "Settings", subtitle: "App preferences and configuration" },
 }
 
 // Read initial page from URL hash to persist navigation across reloads
@@ -42,8 +39,14 @@ const getInitialPage = (): Page => {
   return "/"
 }
 
+// Get initial section from page
+const getInitialSection = (page: Page): BottomSection => {
+  return pathToSection[page] || "shop"
+}
+
 function AppContent() {
   const [currentPage, setCurrentPage] = useState<Page>(getInitialPage)
+  const [activeSection, setActiveSection] = useState<BottomSection>(() => getInitialSection(getInitialPage()))
   const [shopInfo, setShopInfo] = useState<ShopInfo | null>(null)
   const [dateRange, setDateRange] = useState<DateRangeValue>("today")
   const [refreshKey, setRefreshKey] = useState(0)
@@ -52,6 +55,13 @@ function AppContent() {
   // All hooks must be called before any conditional returns
   const handleRefresh = useCallback(() => {
     setRefreshKey((prev) => prev + 1)
+  }, [])
+
+  // Handle section change from bottom nav
+  const handleSectionChange = useCallback((section: BottomSection) => {
+    setActiveSection(section)
+    const defaultTab = sectionDefaultTab[section] as Page
+    setCurrentPage(defaultTab)
   }, [])
 
   // Persist current page to URL hash so it survives page reloads
@@ -128,14 +138,17 @@ function AppContent() {
         return <CustomersDashboard dateRange={dateRange} refreshKey={refreshKey} />
       case "/finance":
         return <FinanceDashboard dateRange={dateRange} refreshKey={refreshKey} />
-      case "/forecasting":
-        return <ForecastingDashboard />
       case "/meta":
         return <MetaDashboard />
-      case "/shopify":
-        return <ShopifyDashboard dateRange={dateRange} refreshKey={refreshKey} />
       case "/inventory":
         return <InventoryDashboard />
+      case "/settings":
+        return (
+          <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+            <Settings size={48} className="mb-4 opacity-50" />
+            <p className="text-lg">Settings coming soon</p>
+          </div>
+        )
       case "/":
       default:
         return <OverviewDashboard dateRange={dateRange} refreshKey={refreshKey} />
@@ -150,12 +163,14 @@ function AppContent() {
         title={title}
         subtitle={subtitle}
         currentPath={currentPage}
+        activeSection={activeSection}
         shopInfo={shopInfo}
         dateRange={dateRange}
         onDateRangeChange={setDateRange}
         onRefresh={handleRefresh}
         onLogout={logout}
         onNavigate={handleNavigate}
+        onSectionChange={handleSectionChange}
       >
         {renderPage()}
       </Layout>

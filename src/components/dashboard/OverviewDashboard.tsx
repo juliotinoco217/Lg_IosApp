@@ -616,12 +616,12 @@ export function OverviewDashboard({ dateRange, refreshKey }: OverviewDashboardPr
                   <PieChart>
                     <Pie
                       data={[
-                        { name: "COGS", value: breakdownMetrics?.cogs || 0, color: "#f43f5e" },
-                        { name: "Ad Spend", value: breakdownMetrics?.adSpend || 0, color: "#3b82f6" },
-                        { name: "Payroll", value: breakdownMetrics?.payroll || 0, color: "#8b5cf6" },
-                        { name: "Shipping", value: breakdownMetrics?.shipping || 0, color: "#0ea5e9" },
-                        { name: "Returns", value: breakdownMetrics?.returns || 0, color: "#f59e0b" },
-                        { name: "Net Profit", value: Math.max(breakdownMetrics?.netProfit || 0, 0), color: "#10b981" },
+                        { name: "COGS", value: breakdownMetrics?.cogs || 0, color: "#ff5252" },
+                        { name: "Ad Spend", value: breakdownMetrics?.adSpend || 0, color: "#ff6b35" },
+                        { name: "Payroll", value: breakdownMetrics?.payroll || 0, color: "#d4af37" },
+                        { name: "Shipping", value: breakdownMetrics?.shipping || 0, color: "#8e8e93" },
+                        { name: "Returns", value: breakdownMetrics?.returns || 0, color: "#ff8a65" },
+                        { name: "Net Profit", value: Math.max(breakdownMetrics?.netProfit || 0, 0), color: "#00c853" },
                       ].filter(item => item.value > 0)}
                       cx="50%"
                       cy="50%"
@@ -631,12 +631,12 @@ export function OverviewDashboard({ dateRange, refreshKey }: OverviewDashboardPr
                       dataKey="value"
                     >
                       {[
-                        { name: "COGS", value: breakdownMetrics?.cogs || 0, color: "#f43f5e" },
-                        { name: "Ad Spend", value: breakdownMetrics?.adSpend || 0, color: "#3b82f6" },
-                        { name: "Payroll", value: breakdownMetrics?.payroll || 0, color: "#8b5cf6" },
-                        { name: "Shipping", value: breakdownMetrics?.shipping || 0, color: "#0ea5e9" },
-                        { name: "Returns", value: breakdownMetrics?.returns || 0, color: "#f59e0b" },
-                        { name: "Net Profit", value: Math.max(breakdownMetrics?.netProfit || 0, 0), color: "#10b981" },
+                        { name: "COGS", value: breakdownMetrics?.cogs || 0, color: "#ff5252" },
+                        { name: "Ad Spend", value: breakdownMetrics?.adSpend || 0, color: "#ff6b35" },
+                        { name: "Payroll", value: breakdownMetrics?.payroll || 0, color: "#d4af37" },
+                        { name: "Shipping", value: breakdownMetrics?.shipping || 0, color: "#8e8e93" },
+                        { name: "Returns", value: breakdownMetrics?.returns || 0, color: "#ff8a65" },
+                        { name: "Net Profit", value: Math.max(breakdownMetrics?.netProfit || 0, 0), color: "#00c853" },
                       ].filter(item => item.value > 0).map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
@@ -655,7 +655,7 @@ export function OverviewDashboard({ dateRange, refreshKey }: OverviewDashboardPr
               <div className="w-full md:w-2/3 grid grid-cols-2 gap-x-4 md:gap-x-8 gap-y-2 md:gap-y-3 text-xs md:text-sm pl-0 md:pl-4 pt-4 md:pt-0">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="h-3 w-3 rounded-full bg-rose-500" />
+                    <div className="h-3 w-3 rounded-full bg-rh-negative" />
                     <span>COGS</span>
                   </div>
                   <div className="text-right">
@@ -667,7 +667,7 @@ export function OverviewDashboard({ dateRange, refreshKey }: OverviewDashboardPr
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="h-3 w-3 rounded-full bg-blue-500" />
+                    <div className="h-3 w-3 rounded-full bg-rh-accent" />
                     <span>Ad Spend</span>
                   </div>
                   <div className="text-right">
@@ -679,7 +679,7 @@ export function OverviewDashboard({ dateRange, refreshKey }: OverviewDashboardPr
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="h-3 w-3 rounded-full bg-violet-500" />
+                    <div className="h-3 w-3 rounded-full bg-rh-accent-gold" />
                     <span>Payroll</span>
                   </div>
                   <div className="text-right">
@@ -691,7 +691,7 @@ export function OverviewDashboard({ dateRange, refreshKey }: OverviewDashboardPr
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="h-3 w-3 rounded-full bg-sky-500" />
+                    <div className="h-3 w-3 rounded-full bg-rh-text-secondary" />
                     <span>Shipping</span>
                   </div>
                   <div className="text-right">
@@ -703,7 +703,7 @@ export function OverviewDashboard({ dateRange, refreshKey }: OverviewDashboardPr
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="h-3 w-3 rounded-full bg-amber-500" />
+                    <div className="h-3 w-3 rounded-full" style={{ backgroundColor: "#ff8a65" }} />
                     <span>Returns</span>
                   </div>
                   <div className="text-right">
@@ -715,12 +715,12 @@ export function OverviewDashboard({ dateRange, refreshKey }: OverviewDashboardPr
                 </div>
                 <div className="flex items-center justify-between pt-2 border-t col-span-2">
                   <div className="flex items-center gap-2">
-                    <div className="h-3 w-3 rounded-full bg-emerald-500" />
+                    <div className="h-3 w-3 rounded-full bg-rh-positive" />
                     <span className="font-medium">Net Profit</span>
                   </div>
                   <div className="text-right">
-                    <span className="font-bold text-emerald-600">{formatCurrency(breakdownMetrics?.netProfit || 0)}</span>
-                    <span className="text-emerald-600 ml-2 text-xs">
+                    <span className="font-bold text-rh-positive">{formatCurrency(breakdownMetrics?.netProfit || 0)}</span>
+                    <span className="text-rh-positive ml-2 text-xs">
                       {(breakdownMetrics?.netSales || 0) > 0 ? (((breakdownMetrics?.netProfit || 0) / (breakdownMetrics?.netSales || 1)) * 100).toFixed(1) : 0}%
                     </span>
                   </div>

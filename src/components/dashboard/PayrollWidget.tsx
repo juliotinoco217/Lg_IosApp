@@ -253,7 +253,7 @@ export function PayrollWidget({ dateRange, refreshKey }: PayrollWidgetProps) {
         <div className="rounded-lg border bg-background p-3 shadow-lg">
           <p className="font-semibold">{formatMonthLabel(data.monthKey)}</p>
           <p className="text-sm text-muted-foreground">
-            Total: <span className="font-medium text-purple-600">{formatCurrency(data.total)}</span>
+            Total: <span className="font-medium text-rh-accent-gold">{formatCurrency(data.total)}</span>
           </p>
           <p className="text-sm text-muted-foreground">
             Payroll runs: <span className="font-medium">{data.count}</span>
@@ -270,7 +270,7 @@ export function PayrollWidget({ dateRange, refreshKey }: PayrollWidgetProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <Users size={18} className="text-purple-600" />
+            <Users size={18} className="text-rh-accent-gold" />
             Payroll (Gusto)
           </CardTitle>
         </CardHeader>
@@ -288,7 +288,7 @@ export function PayrollWidget({ dateRange, refreshKey }: PayrollWidgetProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <Users size={18} className="text-purple-600" />
+            <Users size={18} className="text-rh-accent-gold" />
             Payroll (Gusto)
           </CardTitle>
         </CardHeader>
@@ -309,7 +309,7 @@ export function PayrollWidget({ dateRange, refreshKey }: PayrollWidgetProps) {
     <Card>
       <CardHeader className="flex flex-row items-start justify-between gap-4">
         <CardTitle className="flex items-center gap-2 text-base">
-          <Users size={18} className="text-purple-600" />
+          <Users size={18} className="text-rh-accent-gold" />
           Payroll (Gusto)
         </CardTitle>
         {/* Filters */}
@@ -416,10 +416,10 @@ export function PayrollWidget({ dateRange, refreshKey }: PayrollWidgetProps) {
                         key={entry.monthKey}
                         fill={
                           selectedMonth === entry.monthKey
-                            ? "#7c3aed"
+                            ? "#d4af37"
                             : selectedMonth === "all"
-                            ? "#a78bfa"
-                            : "#e9d5ff"
+                            ? "#d4af37"
+                            : "rgba(212, 175, 55, 0.3)"
                         }
                       />
                     ))}
@@ -434,9 +434,9 @@ export function PayrollWidget({ dateRange, refreshKey }: PayrollWidgetProps) {
           </div>
           {selectedMonth !== "all" && (
             <p className="mt-2 text-center text-sm text-muted-foreground">
-              Showing data for <span className="font-medium text-purple-600">{formatMonthLabel(selectedMonth)}</span>
+              Showing data for <span className="font-medium text-rh-accent-gold">{formatMonthLabel(selectedMonth)}</span>
               {" • "}
-              <button className="text-purple-600 hover:underline" onClick={() => setSelectedMonth("all")}>
+              <button className="text-rh-accent-gold hover:underline" onClick={() => setSelectedMonth("all")}>
                 Show all
               </button>
             </p>
@@ -485,17 +485,17 @@ export function PayrollWidget({ dateRange, refreshKey }: PayrollWidgetProps) {
           <div>
             <h4 className="mb-3 text-sm font-medium text-muted-foreground">Active Expenses</h4>
             <div className="space-y-2">
-              <div className="flex items-center justify-between rounded-lg border p-3 bg-blue-50/50">
+              <div className="flex items-center justify-between rounded-lg border p-3 bg-rh-accent/5">
                 <div className="flex items-center gap-3">
-                  <div className="rounded-full bg-blue-100 p-2">
-                    <DollarSign className="h-4 w-4 text-blue-600" />
+                  <div className="rounded-full bg-rh-accent/10 p-2">
+                    <DollarSign className="h-4 w-4 text-rh-accent" />
                   </div>
                   <div>
                     <p className="font-medium">Meta Ads</p>
                     <p className="text-sm text-muted-foreground">Current billing balance</p>
                   </div>
                 </div>
-                <p className="font-bold text-blue-600">{formatCurrency(metaBilling.balance)}</p>
+                <p className="font-bold text-rh-accent">{formatCurrency(metaBilling.balance)}</p>
               </div>
             </div>
           </div>
@@ -538,8 +538,8 @@ export function PayrollWidget({ dateRange, refreshKey }: PayrollWidgetProps) {
                     className="flex items-center justify-between rounded-lg border p-3"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="rounded-full bg-purple-100 p-2">
-                        <ArrowUpRight className="h-4 w-4 text-purple-600" />
+                      <div className="rounded-full bg-rh-accent-gold/10 p-2">
+                        <ArrowUpRight className="h-4 w-4 text-rh-accent-gold" />
                       </div>
                       <div>
                         <p className="font-medium">{tx.merchant_name || tx.name}</p>
@@ -549,7 +549,7 @@ export function PayrollWidget({ dateRange, refreshKey }: PayrollWidgetProps) {
                         </p>
                       </div>
                     </div>
-                    <p className="font-bold text-purple-600">
+                    <p className="font-bold text-rh-accent-gold">
                       {formatCurrency(Math.abs(tx.amount))}
                     </p>
                   </div>

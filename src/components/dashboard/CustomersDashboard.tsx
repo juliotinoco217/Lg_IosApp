@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { MetricCard } from "./MetricCard"
 import { CohortAnalysisComponent } from "./CohortAnalysis"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { MobileCardView } from "@/components/ui/mobile-card-view"
 import {
   Users,
   UserPlus,
@@ -163,8 +164,8 @@ export function CustomersDashboard({ dateRange, refreshKey }: CustomersDashboard
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-500/10">
-                    <UserPlus size={20} className="text-green-600" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rh-positive/10">
+                    <UserPlus size={20} className="text-rh-positive" />
                   </div>
                   <div>
                     <p className="font-medium">New Customers</p>
@@ -183,8 +184,8 @@ export function CustomersDashboard({ dateRange, refreshKey }: CustomersDashboard
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500/10">
-                    <UserCheck size={20} className="text-blue-600" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rh-accent/10">
+                    <UserCheck size={20} className="text-rh-accent" />
                   </div>
                   <div>
                     <p className="font-medium">Returning Customers</p>
@@ -220,7 +221,7 @@ export function CustomersDashboard({ dateRange, refreshKey }: CustomersDashboard
                     stroke="currentColor"
                     strokeWidth="3"
                     strokeDasharray={`${metrics?.returningCustomerRate || 0} ${100 - (metrics?.returningCustomerRate || 0)}`}
-                    className="text-blue-500"
+                    className="text-rh-accent"
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -266,41 +267,56 @@ export function CustomersDashboard({ dateRange, refreshKey }: CustomersDashboard
                     <Tooltip
                       formatter={(value) => [formatCurrencyDetailed(value as number), "Gross Sales"]}
                     />
-                    <Bar dataKey="grossSales" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
+                    <Bar dataKey="grossSales" fill="#ff6b35" radius={[0, 4, 4, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
 
-              {/* Product Table */}
-              <div className="rounded-lg border">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b bg-muted/50">
-                      <th className="px-4 py-3 text-left text-sm font-medium">Product</th>
-                      <th className="px-4 py-3 text-right text-sm font-medium">Orders</th>
-                      <th className="px-4 py-3 text-right text-sm font-medium">Gross Sales</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {topProducts.map((product, index) => (
-                      <tr key={index} className="border-b last:border-0">
-                        <td className="px-4 py-3 text-sm">
-                          <div className="flex items-center gap-2">
-                            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-xs font-medium">
-                              {index + 1}
-                            </span>
-                            {product.title}
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-right text-sm">{product.orders}</td>
-                        <td className="px-4 py-3 text-right text-sm font-medium">
-                          {formatCurrency(product.grossSales)}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              {/* Product Table / Mobile Cards */}
+              <MobileCardView
+                data={topProducts}
+                renderCard={(product, index) => ({
+                  title: product.title,
+                  subtitle: `Rank #${index + 1}`,
+                  fields: [
+                    { label: "Orders", value: product.orders.toString() },
+                    { label: "Gross Sales", value: formatCurrency(product.grossSales) },
+                  ],
+                  badge: index === 0 ? { text: "#1", variant: "positive" as const } : undefined,
+                })}
+                renderTable={() => (
+                  <div className="rounded-lg border">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b bg-muted/50">
+                          <th className="px-4 py-3 text-left text-sm font-medium">Product</th>
+                          <th className="px-4 py-3 text-right text-sm font-medium">Orders</th>
+                          <th className="px-4 py-3 text-right text-sm font-medium">Gross Sales</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {topProducts.map((product, index) => (
+                          <tr key={index} className="border-b last:border-0">
+                            <td className="px-4 py-3 text-sm">
+                              <div className="flex items-center gap-2">
+                                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-rh-accent/10 text-xs font-medium text-rh-accent">
+                                  {index + 1}
+                                </span>
+                                {product.title}
+                              </div>
+                            </td>
+                            <td className="px-4 py-3 text-right text-sm">{product.orders}</td>
+                            <td className="px-4 py-3 text-right text-sm font-medium">
+                              {formatCurrency(product.grossSales)}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                emptyMessage="No product data available"
+              />
             </div>
           ) : (
             <div className="flex h-32 items-center justify-center text-muted-foreground">

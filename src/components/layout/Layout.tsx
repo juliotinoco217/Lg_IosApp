@@ -4,55 +4,84 @@ import type { ShopInfo } from "./Sidebar"
 import { Header } from "./Header"
 import type { DateRangeValue } from "./Header"
 import { BottomTabBar } from "./BottomTabBar"
+import type { BottomSection } from "./BottomTabBar"
 import { SlidingTabs } from "./SlidingTabs"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { useSwipe } from "@/hooks/useSwipe"
 
-// Navigation tabs for SlidingTabs component
-const navigationTabs = [
-  { id: "/", label: "KPIs" },
-  { id: "/products", label: "Products" },
-  { id: "/customers", label: "Customers" },
-  { id: "/finance", label: "Finance" },
-  { id: "/inventory", label: "Inventory" },
-  { id: "/marketing", label: "Marketing" },
-  { id: "/email", label: "Email" },
-  { id: "/forecasting", label: "Forecast" },
-  { id: "/shopify", label: "Shopify" },
-  { id: "/meta", label: "Meta" },
-  { id: "/banking", label: "Banking" },
-]
+// Section-specific tabs
+const sectionTabs: Record<BottomSection, { id: string; label: string }[]> = {
+  finance: [
+    { id: "/finance", label: "Finance" },
+  ],
+  shop: [
+    { id: "/", label: "Dashboard" },
+    { id: "/customers", label: "Customers" },
+    { id: "/products", label: "Products" },
+    { id: "/inventory", label: "Inventory" },
+  ],
+  marketing: [
+    { id: "/meta", label: "Meta" },
+    { id: "/email", label: "Email" },
+  ],
+  settings: [],
+}
+
+// Map page paths to their section
+export const pathToSection: Record<string, BottomSection> = {
+  "/finance": "finance",
+  "/": "shop",
+  "/customers": "shop",
+  "/products": "shop",
+  "/inventory": "shop",
+  "/meta": "marketing",
+  "/email": "marketing",
+  "/settings": "settings",
+}
+
+// Default tab for each section
+export const sectionDefaultTab: Record<BottomSection, string> = {
+  finance: "/finance",
+  shop: "/",
+  marketing: "/meta",
+  settings: "/settings",
+}
 
 interface LayoutProps {
   children: React.ReactNode
   title: string
   subtitle?: string
   currentPath?: string
+  activeSection: BottomSection
   shopInfo?: ShopInfo | null
   dateRange: DateRangeValue
   onDateRangeChange: (value: DateRangeValue) => void
   onRefresh?: () => void
   onLogout?: () => void
   onNavigate?: (href: string) => void
+  onSectionChange: (section: BottomSection) => void
 }
 
-export function Layout({ children, title, subtitle, currentPath, shopInfo, dateRange, onDateRangeChange, onRefresh, onLogout, onNavigate }: LayoutProps) {
+export function Layout({ children, title, subtitle, currentPath, activeSection, shopInfo, dateRange, onDateRangeChange, onRefresh, onLogout, onNavigate, onSectionChange }: LayoutProps) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
-  // Get current tab index for swipe navigation
-  const currentTabIndex = navigationTabs.findIndex(tab => tab.id === currentPath)
+  // Get tabs for current section
+  const currentTabs = sectionTabs[activeSection] || []
+
+  // Get current tab index for swipe navigation within section
+  const currentTabIndex = currentTabs.findIndex(tab => tab.id === currentPath)
 
   const goToNextTab = useCallback(() => {
-    if (currentTabIndex < navigationTabs.length - 1) {
-      onNavigate?.(navigationTabs[currentTabIndex + 1].id)
+    if (currentTabIndex < currentTabs.length - 1) {
+      onNavigate?.(currentTabs[currentTabIndex + 1].id)
     }
-  }, [currentTabIndex, onNavigate])
+  }, [currentTabIndex, currentTabs, onNavigate])
 
   const goToPrevTab = useCallback(() => {
     if (currentTabIndex > 0) {
-      onNavigate?.(navigationTabs[currentTabIndex - 1].id)
+      onNavigate?.(currentTabs[currentTabIndex - 1].id)
     }
-  }, [currentTabIndex, onNavigate])
+  }, [currentTabIndex, currentTabs, onNavigate])
 
   // Swipe handlers for tab navigation
   const swipeHandlers = useSwipe({
@@ -78,14 +107,16 @@ export function Layout({ children, title, subtitle, currentPath, shopInfo, dateR
           onOpenNav={() => setMobileNavOpen(true)}
         />
 
-        {/* Mobile Sliding Tabs */}
-        <div className="md:hidden border-b border-border flex-shrink-0">
-          <SlidingTabs
-            tabs={navigationTabs}
-            activeTab={currentPath || "/"}
-            onTabChange={(id) => onNavigate?.(id)}
-          />
-        </div>
+        {/* Mobile Sliding Tabs - only show if section has multiple tabs */}
+        {currentTabs.length > 1 && (
+          <div className="md:hidden border-b border-border flex-shrink-0">
+            <SlidingTabs
+              tabs={currentTabs}
+              activeTab={currentPath || "/"}
+              onTabChange={(id) => onNavigate?.(id)}
+            />
+          </div>
+        )}
 
         <main
           className="flex-1 overflow-y-auto overflow-x-hidden p-3 pb-20 md:p-6 md:pb-6"
@@ -96,9 +127,8 @@ export function Layout({ children, title, subtitle, currentPath, shopInfo, dateR
       </div>
 
       <BottomTabBar
-        currentPath={currentPath || "/"}
-        onNavigate={(href) => onNavigate?.(href)}
-        onOpenNav={() => setMobileNavOpen(true)}
+        activeSection={activeSection}
+        onSectionChange={onSectionChange}
       />
 
       <Dialog open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
