@@ -1,0 +1,160 @@
+@import "tailwindcss";
+
+/* Robinhood-style dark theme as default */
+:root {
+  /* Pure black background for Robinhood style */
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
+
+  /* Card colors - dark gray */
+  --card: 0 0% 11%;
+  --card-foreground: 0 0% 100%;
+
+  /* Popover */
+  --popover: 0 0% 11%;
+  --popover-foreground: 0 0% 100%;
+
+  /* Primary - white on black */
+  --primary: 0 0% 100%;
+  --primary-foreground: 0 0% 0%;
+
+  /* Secondary - dark gray */
+  --secondary: 0 0% 17%;
+  --secondary-foreground: 0 0% 100%;
+
+  /* Muted - gray text */
+  --muted: 0 0% 17%;
+  --muted-foreground: 0 0% 56%;
+
+  /* Accent - orange (Robinhood style) */
+  --accent: 16 100% 60%;
+  --accent-foreground: 0 0% 100%;
+
+  /* Destructive - red */
+  --destructive: 0 100% 66%;
+  --destructive-foreground: 0 0% 100%;
+
+  /* Borders - subtle dark gray */
+  --border: 0 0% 17%;
+  --input: 0 0% 17%;
+  --ring: 16 100% 60%;
+
+  --radius: 0.75rem;
+
+  /* Sidebar - same dark theme */
+  --sidebar-background: 0 0% 0%;
+  --sidebar-foreground: 0 0% 100%;
+  --sidebar-primary: 16 100% 60%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 0 0% 11%;
+  --sidebar-accent-foreground: 0 0% 100%;
+  --sidebar-border: 0 0% 17%;
+  --sidebar-ring: 16 100% 60%;
+
+  /* Chart colors - Robinhood style */
+  --chart-1: 16 100% 60%;    /* Orange accent */
+  --chart-2: 43 74% 53%;     /* Gold */
+  --chart-3: 145 100% 39%;   /* Green positive */
+  --chart-4: 0 100% 66%;     /* Red negative */
+  --chart-5: 200 70% 50%;    /* Blue info */
+
+  /* Custom Robinhood colors */
+  --rh-positive: 145 100% 39%;
+  --rh-negative: 0 100% 66%;
+  --rh-accent: 16 100% 60%;
+  --rh-gold: 43 74% 53%;
+}
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+  --color-sidebar-background: hsl(var(--sidebar-background));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+  /* Robinhood custom colors */
+  --color-rh-positive: hsl(var(--rh-positive));
+  --color-rh-negative: hsl(var(--rh-negative));
+  --color-rh-accent: hsl(var(--rh-accent));
+  --color-rh-gold: hsl(var(--rh-gold));
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+* {
+  @apply border-border;
+}
+
+body {
+  @apply bg-background text-foreground;
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Prevent horizontal scroll on entire app */
+html, body, #root {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* iOS Safe Area Support */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* Bottom tab bar safe area */
+.bottom-tab-bar {
+  padding-bottom: max(env(safe-area-inset-bottom), 8px);
+}
+
+/* Fix for iOS overscroll */
+html {
+  overscroll-behavior: none;
+}
+
+/* iOS touch feedback */
+.touch-manipulation {
+  touch-action: manipulation;
+}
+
+/* Prevent text selection on touch */
+.select-none-touch {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
