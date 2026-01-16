@@ -34,6 +34,7 @@ import {
 } from "lucide-react"
 import type { DateRangeValue } from "@/components/layout/Header"
 import { apiFetch } from "@/lib/api"
+import { formatDateForDisplay } from "@/lib/date-utils"
 
 interface Transaction {
   transaction_id: string
@@ -165,13 +166,6 @@ export function TransactionTable({ dateRange, refreshKey, accounts }: Transactio
     }).format(value)
   }
 
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    })
-  }
 
   const handleSort = (field: SortField) => {
     if (sortBy === field) {
@@ -372,7 +366,7 @@ export function TransactionTable({ dateRange, refreshKey, accounts }: Transactio
                 transactions.map((tx) => (
                   <TableRow key={tx.transaction_id} className="group">
                     <TableCell className="font-medium text-sm">
-                      {formatDate(tx.date)}
+                      {formatDateForDisplay(tx.date)}
                       {tx.pending && (
                         <span className="ml-2 inline-flex items-center rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-700">
                           Pending

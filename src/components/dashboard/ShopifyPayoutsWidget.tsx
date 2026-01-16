@@ -13,6 +13,7 @@ import {
 } from "lucide-react"
 import type { DateRangeValue } from "@/components/layout/Header"
 import { apiFetch } from "@/lib/api"
+import { formatDateForDisplay } from "@/lib/date-utils"
 
 interface Payout {
   id: number
@@ -99,19 +100,9 @@ export function ShopifyPayoutsWidget({ refreshKey }: ShopifyPayoutsWidgetProps) 
     }).format(num)
   }
 
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    })
-  }
 
   const formatShortDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-    })
+    return formatDateForDisplay(dateStr)
   }
 
   const getStatusIcon = (status: string) => {
@@ -360,7 +351,7 @@ export function ShopifyPayoutsWidget({ refreshKey }: ShopifyPayoutsWidgetProps) 
                   <div className="flex items-center gap-3">
                     {getStatusIcon(payout.status)}
                     <div>
-                      <p className="font-medium">{formatDate(payout.date)}</p>
+                      <p className="font-medium">{formatDateForDisplay(payout.date)}</p>
                       <span
                         className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${getStatusColor(
                           payout.status
@@ -393,7 +384,7 @@ export function ShopifyPayoutsWidget({ refreshKey }: ShopifyPayoutsWidgetProps) 
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="h-4 w-4 text-green-500" />
                     <div>
-                      <p className="font-medium">{formatDate(payout.date)}</p>
+                      <p className="font-medium">{formatDateForDisplay(payout.date)}</p>
                       <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
                         Deposited
                       </span>
@@ -429,7 +420,7 @@ export function ShopifyPayoutsWidget({ refreshKey }: ShopifyPayoutsWidgetProps) 
                         {tx.source_type === "charge" ? "Sale" : tx.type}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {formatDate(tx.processed_at)}
+                        {formatDateForDisplay(tx.processed_at)}
                       </p>
                     </div>
                   </div>

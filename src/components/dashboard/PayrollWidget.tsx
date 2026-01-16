@@ -14,6 +14,8 @@ import {
 import {
   BarChart,
   Bar,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -23,6 +25,7 @@ import {
 } from "recharts"
 import type { DateRangeValue } from "@/components/layout/Header"
 import { apiFetch } from "@/lib/api"
+import { formatDateForDisplay } from "@/lib/date-utils"
 
 interface PayrollTransaction {
   transaction_id: string
@@ -74,6 +77,7 @@ export function PayrollWidget({ dateRange, refreshKey }: PayrollWidgetProps) {
   const [customStartDate, setCustomStartDate] = useState<string>("")
   const [customEndDate, setCustomEndDate] = useState<string>("")
   const [useCustomRange, setUseCustomRange] = useState(false)
+  const [chartView, setChartView] = useState<"area" | "bar">("area")
 
   // Note: We always fetch all available payroll data and filter client-side
   // This ensures we have complete historical data for proper month selection
@@ -209,19 +213,9 @@ export function PayrollWidget({ dateRange, refreshKey }: PayrollWidgetProps) {
     }).format(value)
   }
 
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    })
-  }
 
   const formatShortDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-    })
+    return formatDateForDisplay(dateStr)
   }
 
   const formatMonthLabel = (monthKey: string) => {
@@ -386,45 +380,110 @@ export function PayrollWidget({ dateRange, refreshKey }: PayrollWidgetProps) {
 
         {/* Monthly Payroll Chart */}
         <div>
-          <h4 className="mb-3 text-sm font-medium text-muted-foreground">Monthly Payroll</h4>
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-sm font-medium text-muted-foreground">Monthly Payroll</h4>
+            <div className="flex gap-1 rounded-lg border p-1">
+              <button
+                onClick={() => setChartView("area")}
+                className={`px-3 py-1 text-xs rounded-md transition-colors ${
+                  chartView === "area"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-muted"
+                }`}
+              >
+                Area
+              </button>
+              <button
+                onClick={() => setChartView("bar")}
+                className={`px-3 py-1 text-xs rounded-md transition-colors ${
+                  chartView === "bar"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-muted"
+                }`}
+              >
+                Bars
+              </button>
+            </div>
+          </div>
           <div className="h-[200px]">
             {monthlyData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={monthlyData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted/30" vertical={false} />
-                  <XAxis
-                    dataKey="month"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-                  />
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-                    tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
-                  />
-                  <Tooltip content={<CustomTooltip />} cursor={{ fill: "hsl(var(--muted)/0.2)" }} />
-                  <Bar
-                    dataKey="total"
-                    radius={[4, 4, 0, 0]}
-                    cursor="pointer"
-                    onClick={(data) => handleBarClick(data)}
-                  >
-                    {monthlyData.map((entry) => (
-                      <Cell
-                        key={entry.monthKey}
-                        fill={
-                          selectedMonth === entry.monthKey
-                            ? "#d4af37"
-                            : selectedMonth === "all"
-                            ? "#d4af37"
-                            : "rgba(212, 175, 55, 0.3)"
-                        }
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
+                {chartView === "area" ? (
+                  <AreaChart data={monthlyData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="payrollGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#d4af37" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#d4af37" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" vertical={false} />
+                    <XAxis
+                      dataKey="month"
+                      className="text-xs"
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <YAxis
+                      className="text-xs"
+                      tickLine={false}
+                      axisLine={false}
+                      tickFormatter={(value) => formatCurrency(value)}
+                    />
+                    <Tooltip
+                      formatter={(value) => [formatCurrency(Number(value) || 0), "Payroll"]}
+                      contentStyle={{
+                        backgroundColor: "hsl(var(--card))",
+                        border: "1px solid hsl(var(--border))",
+                        borderRadius: "8px",
+                      }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="total"
+                      stroke="#d4af37"
+                      strokeWidth={2}
+                      fill="url(#payrollGradient)"
+                      cursor="pointer"
+                      onClick={(data) => handleBarClick(data)}
+                    />
+                  </AreaChart>
+                ) : (
+                  <BarChart data={monthlyData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted/30" vertical={false} />
+                    <XAxis
+                      dataKey="month"
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+                    />
+                    <YAxis
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+                      tickFormatter={(v) => `$${v.toLocaleString()}`}
+                    />
+                    <Tooltip content={<CustomTooltip />} cursor={{ fill: "hsl(var(--muted)/0.2)" }} />
+                    <Bar
+                      dataKey="total"
+                      radius={[4, 4, 0, 0]}
+                      cursor="pointer"
+                      onClick={(data) => handleBarClick(data)}
+                    >
+                      {monthlyData.map((entry) => (
+                        <Cell
+                          key={entry.monthKey}
+                          fill={
+                            selectedMonth === entry.monthKey
+                              ? "#d4af37"
+                              : selectedMonth === "all"
+                              ? "#d4af37"
+                              : "rgba(212, 175, 55, 0.3)"
+                          }
+                        />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                )}
               </ResponsiveContainer>
             ) : (
               <div className="flex h-full items-center justify-center text-muted-foreground">
@@ -526,7 +585,7 @@ export function PayrollWidget({ dateRange, refreshKey }: PayrollWidgetProps) {
             <h4 className="mb-3 text-sm font-medium text-muted-foreground">
               {selectedMonth === "all"
                 ? useCustomRange && customStartDate && customEndDate
-                  ? `${formatDate(customStartDate)} - ${formatDate(customEndDate)}`
+                  ? `${formatDateForDisplay(customStartDate)} - ${formatDateForDisplay(customEndDate)}`
                   : "All Payroll Runs"
                 : formatMonthLabel(selectedMonth)}
             </h4>
@@ -544,7 +603,7 @@ export function PayrollWidget({ dateRange, refreshKey }: PayrollWidgetProps) {
                       <div>
                         <p className="font-medium">{tx.merchant_name || tx.name}</p>
                         <p className="text-sm text-muted-foreground">
-                          {formatDate(tx.date)}
+                          {formatDateForDisplay(tx.date)}
                           {tx.pending && " • Pending"}
                         </p>
                       </div>

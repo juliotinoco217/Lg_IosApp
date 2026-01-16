@@ -33,6 +33,7 @@ import {
   AreaChart,
 } from "recharts"
 import { apiFetch } from "@/lib/api"
+import { formatDateForDisplay } from "@/lib/date-utils"
 
 // Types
 interface MonthlyTarget {
@@ -463,12 +464,6 @@ export function ForecastingDashboard() {
     return `${sign}${value.toFixed(1)}%`
   }
 
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-    })
-  }
 
   const selectedScenario = scenarios.find((s) => s.id === selectedScenarioId)
 
@@ -1017,7 +1012,7 @@ export function ForecastingDashboard() {
               <div className="space-y-1">
                 <label className="text-xs font-medium text-muted-foreground">Date Range</label>
                 <p className="font-semibold">
-                  {formatDate(selectedScenario.startDate)} <ArrowRight className="inline h-3 w-3" /> {formatDate(selectedScenario.endDate)}
+                  {formatDateForDisplay(selectedScenario.startDate)} <ArrowRight className="inline h-3 w-3" /> {formatDateForDisplay(selectedScenario.endDate)}
                 </p>
               </div>
               <div className="space-y-1">
@@ -1117,14 +1112,14 @@ export function ForecastingDashboard() {
                     <CartesianGrid strokeDasharray="3 3" className="stroke-slate-200 dark:stroke-slate-700" />
                     <XAxis
                       dataKey="date"
-                      tickFormatter={formatDate}
+                      tickFormatter={formatDateForDisplay}
                       className="text-xs"
                       interval="preserveStartEnd"
                       tick={{ fill: "#94a3b8" }}
                     />
                     <YAxis
                       className="text-xs"
-                      tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
+                      tickFormatter={(v) => `$${v.toLocaleString()}`}
                       tick={{ fill: "#94a3b8" }}
                     />
                     <Tooltip
@@ -1138,7 +1133,7 @@ export function ForecastingDashboard() {
                         formatCurrency(Number(value) ?? 0),
                         name === "actualRevenue" ? "Actual" : "Forecast",
                       ]}
-                      labelFormatter={formatDate}
+                      labelFormatter={formatDateForDisplay}
                     />
                     <Legend />
                     <Area
@@ -1187,7 +1182,7 @@ export function ForecastingDashboard() {
                         <td className="px-4 py-3">
                           <span className="font-medium">Week {week.weekNumber}</span>
                           <span className="ml-2 text-xs text-muted-foreground">
-                            {formatDate(week.weekStart)} - {formatDate(week.weekEnd)}
+                            {formatDateForDisplay(week.weekStart)} - {formatDateForDisplay(week.weekEnd)}
                           </span>
                         </td>
                         <td className="px-4 py-3 text-right font-medium">{formatCurrency(week.actualRevenue)}</td>
@@ -1218,7 +1213,7 @@ export function ForecastingDashboard() {
                   <BarChart data={forecastResult.monthlyData} barGap={8}>
                     <CartesianGrid strokeDasharray="3 3" className="stroke-slate-200 dark:stroke-slate-700" />
                     <XAxis dataKey="monthName" tick={{ fill: "#94a3b8", fontSize: 12 }} />
-                    <YAxis tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} tick={{ fill: "#94a3b8", fontSize: 12 }} />
+                    <YAxis tickFormatter={(v) => `$${v.toLocaleString()}`} tick={{ fill: "#94a3b8", fontSize: 12 }} />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: "white",
@@ -1242,7 +1237,7 @@ export function ForecastingDashboard() {
                   <BarChart data={forecastResult.quarterlyData} barGap={8}>
                     <CartesianGrid strokeDasharray="3 3" className="stroke-slate-200 dark:stroke-slate-700" />
                     <XAxis dataKey="quarter" tick={{ fill: "#94a3b8", fontSize: 12 }} />
-                    <YAxis tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} tick={{ fill: "#94a3b8", fontSize: 12 }} />
+                    <YAxis tickFormatter={(v) => `$${v.toLocaleString()}`} tick={{ fill: "#94a3b8", fontSize: 12 }} />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: "white",

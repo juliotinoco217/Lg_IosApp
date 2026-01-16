@@ -8,6 +8,7 @@ import {
   Tooltip,
 } from "recharts"
 import { cn } from "@/lib/utils"
+import { formatDateForDisplay, formatCurrency } from "@/lib/date-utils"
 
 interface DataPoint {
   date: string
@@ -69,14 +70,7 @@ export function FinanceChart({
   void _trend
 
   const formatValue = (value: number) => {
-    if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`
-    if (value >= 1000) return `$${(value / 1000).toFixed(1)}K`
-    return `$${value.toFixed(0)}`
-  }
-
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr)
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" })
+    return formatCurrency(value)
   }
 
   if (!data || data.length === 0) {
@@ -111,7 +105,7 @@ export function FinanceChart({
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 10, fill: "#8e8e93" }}
-                tickFormatter={formatDate}
+                tickFormatter={formatDateForDisplay}
                 minTickGap={50}
               />
               <YAxis
@@ -132,7 +126,7 @@ export function FinanceChart({
                 return (
                   <div className="rounded-lg bg-rh-card border border-white/10 px-3 py-2 shadow-xl">
                     <p className="text-xs text-muted-foreground">
-                      {formatDate(point.date)}
+                      {formatDateForDisplay(point.date)}
                     </p>
                     <p className="text-sm font-semibold text-foreground">
                       {formatValue(point[dataKey] as number)}
