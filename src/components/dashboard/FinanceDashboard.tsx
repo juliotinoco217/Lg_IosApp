@@ -25,6 +25,8 @@ import {
 import type { DateRangeValue } from "@/components/layout/Header"
 import { apiFetch } from "@/lib/api"
 
+type FinanceTabType = "overview" | "payroll"
+
 interface Account {
   account_id: string
   name: string
@@ -82,6 +84,7 @@ interface FinanceDashboardProps {
 }
 
 export function FinanceDashboard({ dateRange, refreshKey }: FinanceDashboardProps) {
+  const [activeTab, setActiveTab] = useState<FinanceTabType>("overview")
   const [accounts, setAccounts] = useState<Account[]>([])
   const [disabledAccounts, setDisabledAccounts] = useState<Account[]>([])
   const [pendingTransactions, setPendingTransactions] = useState<Transaction[]>([])
@@ -360,6 +363,31 @@ export function FinanceDashboard({ dateRange, refreshKey }: FinanceDashboardProp
   return (
     <div className="space-y-6 md:space-y-8">
       <PlaidReconnect />
+      
+      {/* Tab Navigation */}
+      <div className="flex gap-2">
+        {[
+          { id: "overview", label: "Overview", icon: <Wallet size={16} /> },
+          { id: "payroll", label: "Payroll", icon: <Users size={16} /> },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id as FinanceTabType)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === tab.id
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:bg-muted"
+            }`}
+          >
+            {tab.icon}
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === "overview" && (
+        <div className="space-y-6 md:space-y-8">
 
       {/* Main Financial Position */}
       <div className="grid gap-6 lg:grid-cols-2">
@@ -764,8 +792,13 @@ Weekly = Avg Payroll (${fmt(avgPayrollPerRun)}) ÷ 2
         </Card>
       )}
 
-      {/* Payroll Widget - Full Details */}
-      <PayrollWidget dateRange={dateRange} refreshKey={refreshKey} />
+        </div>
+      )}
+
+      {/* Payroll Tab */}
+      {activeTab === "payroll" && (
+        <PayrollWidget dateRange={dateRange} refreshKey={refreshKey} />
+      )}
     </div>
   )
 }

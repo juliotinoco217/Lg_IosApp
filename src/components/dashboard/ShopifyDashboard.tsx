@@ -108,12 +108,6 @@ export function ShopifyDashboard({ dateRange, refreshKey }: ShopifyDashboardProp
   }
 
   const formatCompact = (value: number) => {
-    if (value >= 1000000) {
-      return `$${(value / 1000000).toFixed(1)}M`
-    }
-    if (value >= 1000) {
-      return `$${(value / 1000).toFixed(1)}K`
-    }
     return formatCurrency(value)
   }
 
@@ -340,7 +334,7 @@ export function ShopifyDashboard({ dateRange, refreshKey }: ShopifyDashboardProp
                     className="text-xs"
                     tickLine={false}
                     axisLine={false}
-                    tickFormatter={(value) => `$${(value / 1000).toFixed(0)}K`}
+                    tickFormatter={(value) => formatCurrency(value)}
                   />
                   <Tooltip
                     formatter={(value) => [formatCurrency(Number(value) || 0), "Revenue"]}

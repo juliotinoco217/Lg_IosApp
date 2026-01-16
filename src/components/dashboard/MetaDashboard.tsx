@@ -457,15 +457,19 @@ export function MetaDashboard() {
 
   // Format helpers
   const formatCurrency = (value: number) => {
-    if (value >= 1000000) return `$${(value / 1000000).toFixed(2)}M`
-    if (value >= 1000) return `$${(value / 1000).toFixed(1)}K`
-    return `$${value.toFixed(2)}`
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(value)
   }
 
   const formatNumber = (value: number) => {
-    if (value >= 1000000) return `${(value / 1000000).toFixed(2)}M`
-    if (value >= 1000) return `${(value / 1000).toFixed(1)}K`
-    return value.toFixed(0)
+    return new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value)
   }
 
   const formatPercent = (value: number) => `${value.toFixed(2)}%`
@@ -958,7 +962,7 @@ export function MetaDashboard() {
                             dy={10}
                           />
                           <YAxis
-                            tickFormatter={(v) => `$${v >= 1000 ? `${(v/1000).toFixed(0)}K` : v.toFixed(0)}`}
+                            tickFormatter={(v) => formatCurrency(v)}
                             axisLine={false}
                             tickLine={false}
                             tick={{ fill: "#9ca3af", fontSize: 11, fontWeight: 500 }}
@@ -1171,7 +1175,7 @@ export function MetaDashboard() {
                           dy={10}
                         />
                         <YAxis
-                          tickFormatter={(v) => `$${v >= 1000 ? `${(v/1000).toFixed(0)}K` : v}`}
+                          tickFormatter={(v) => formatCurrency(v)}
                           axisLine={false}
                           tickLine={false}
                           tick={{ fill: "#9ca3af", fontSize: 11, fontWeight: 500 }}

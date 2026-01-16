@@ -54,10 +54,12 @@ export function CohortAnalysisComponent({ refreshKey }: CohortAnalysisProps) {
   }, [refreshKey])
 
   const formatCurrency = (value: number) => {
-    if (value >= 1000) {
-      return `$${(value / 1000).toFixed(1)}k`
-    }
-    return `$${value.toFixed(0)}`
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value)
   }
 
   const formatPercent = (value: number) => {

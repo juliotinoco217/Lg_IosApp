@@ -24,13 +24,12 @@ export function HeroMetric({
 }: HeroMetricProps) {
   const formatChange = (val: number) => {
     const absVal = Math.abs(val)
-    if (absVal >= 1000000) {
-      return `$${(absVal / 1000000).toFixed(1)}M`
-    }
-    if (absVal >= 1000) {
-      return `$${(absVal / 1000).toFixed(1)}K`
-    }
-    return `$${absVal.toFixed(0)}`
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(absVal)
   }
 
   return (

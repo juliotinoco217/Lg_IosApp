@@ -260,12 +260,6 @@ export function OverviewDashboard({ dateRange, refreshKey }: OverviewDashboardPr
   }
 
   const formatCompact = (value: number) => {
-    if (value >= 1000000) {
-      return `$${(value / 1000000).toFixed(1)}M`
-    }
-    if (value >= 1000) {
-      return `$${(value / 1000).toFixed(1)}K`
-    }
     return formatCurrency(value)
   }
 
@@ -462,7 +456,7 @@ export function OverviewDashboard({ dateRange, refreshKey }: OverviewDashboardPr
                     axisLine={false}
                     tickLine={false}
                     tick={{ fill: '#6b7280', fontSize: 10 }}
-                    tickFormatter={(v) => `$${v >= 1000 ? `${(v/1000).toFixed(0)}k` : v}`}
+                    tickFormatter={(v) => formatCurrency(v)}
                   />
                   <Tooltip
                     contentStyle={{
@@ -535,7 +529,7 @@ export function OverviewDashboard({ dateRange, refreshKey }: OverviewDashboardPr
                     </linearGradient>
                   </defs>
                   <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 10 }} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 10 }} tickFormatter={(v) => `$${v >= 1000 ? `${(v/1000).toFixed(0)}k` : v}`} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 10 }} tickFormatter={(v) => formatCurrency(v)} />
                   <Tooltip
                     contentStyle={{ backgroundColor: '#1c1c1e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
                     labelStyle={{ color: '#fff' }}
@@ -573,7 +567,7 @@ export function OverviewDashboard({ dateRange, refreshKey }: OverviewDashboardPr
                     </linearGradient>
                   </defs>
                   <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 10 }} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 10 }} tickFormatter={(v) => `$${v >= 1000 ? `${(v/1000).toFixed(0)}k` : v}`} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 10 }} tickFormatter={(v) => formatCurrency(v)} />
                   <Tooltip
                     contentStyle={{ backgroundColor: '#1c1c1e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
                     labelStyle={{ color: '#fff' }}
