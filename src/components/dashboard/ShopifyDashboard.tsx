@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { GroupedMetricCard } from "./GroupedMetricCard"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { HorizontalScroll } from "@/components/ui/horizontal-scroll"
 import {
   DollarSign,
   ShoppingCart,
@@ -11,6 +12,8 @@ import {
   RotateCcw,
   Wallet,
   ShoppingBag,
+  Users,
+  TrendingUp,
 } from "lucide-react"
 import {
   XAxis,
@@ -25,6 +28,8 @@ import {
 } from "recharts"
 import type { DateRangeValue } from "@/components/layout/Header"
 import { apiFetch } from "@/lib/api"
+
+type ChartTimeRange = "7d" | "30d" | "90d"
 
 interface ShopifyMetrics {
   mer: number
@@ -67,16 +72,16 @@ export function ShopifyDashboard({ dateRange, refreshKey }: ShopifyDashboardProp
   const [metrics, setMetrics] = useState<ShopifyMetrics | null>(null)
   const [revenueData, setRevenueData] = useState<RevenueDataPoint[]>([])
   const [loading, setLoading] = useState(true)
+  const [chartTimeRange, setChartTimeRange] = useState<ChartTimeRange>("30d")
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true)
       try {
         const encodedRange = encodeURIComponent(dateRange)
-        // Charts always show 30 days of daily data, metrics use selected date range
         const [metricsRes, chartRes] = await Promise.all([
           apiFetch(`/api/metrics/overview?range=${encodedRange}`),
-          apiFetch(`/api/metrics/revenue-chart?range=30d`),
+          apiFetch(`/api/metrics/revenue-chart?range=${chartTimeRange}`),
         ])
 
         if (metricsRes.ok) {
@@ -96,7 +101,7 @@ export function ShopifyDashboard({ dateRange, refreshKey }: ShopifyDashboardProp
     }
 
     fetchData()
-  }, [dateRange, refreshKey])
+  }, [dateRange, refreshKey, chartTimeRange])
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -163,6 +168,16 @@ export function ShopifyDashboard({ dateRange, refreshKey }: ShopifyDashboardProp
   const displayReturningCustomers = returningCustomers > 0 ? returningCustomers : returningOrdersEstimate
 
   const aov = metrics?.aov || 0
+  const cac = metrics?.cac || 0
+  const adSpend = metrics?.adSpend || 0
+  const mer = metrics?.mer || 0
+
+  // Chart time range labels
+  const chartRangeLabels: Record<ChartTimeRange, string> = {
+    "7d": "7 Days",
+    "30d": "30 Days",
+    "90d": "90 Days",
+  }
 
   return (
     <div className="space-y-6">
@@ -238,68 +253,84 @@ export function ShopifyDashboard({ dateRange, refreshKey }: ShopifyDashboardProp
         />
       </div>
 
-      {/* Cost Breakdown Row */}
-      <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
-        <Card className="bg-gradient-to-br from-rose-50 to-rose-100/50 dark:from-rose-950/20 dark:to-rose-900/10">
-          <CardContent className="pt-5 pb-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-rose-600 dark:text-rose-400">COGS</p>
-                <p className="text-2xl font-bold text-rose-700 dark:text-rose-300">{formatCompact(cogs)}</p>
-                <p className="text-xs text-rose-500 dark:text-rose-400">{cogsPercent.toFixed(1)}% of sales</p>
-              </div>
-              <div className="rounded-full bg-rose-200/50 p-3 dark:bg-rose-800/30">
-                <Package className="h-5 w-5 text-rose-600 dark:text-rose-400" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Metrics Slider */}
+      <HorizontalScroll gap={10} padding={0}>
+        {/* AOV */}
+        <div className="flex-shrink-0 min-w-[100px] rounded-xl bg-violet-500/10 dark:bg-violet-500/20 p-3">
+          <div className="flex items-center gap-2 mb-1">
+            <ShoppingCart className="h-3.5 w-3.5 text-violet-500" />
+            <span className="text-[10px] font-medium text-violet-600 dark:text-violet-400">AOV</span>
+          </div>
+          <p className="text-base font-bold text-violet-700 dark:text-violet-300">{formatCurrency(aov)}</p>
+        </div>
 
-        <Card className="bg-gradient-to-br from-sky-50 to-sky-100/50 dark:from-sky-950/20 dark:to-sky-900/10">
-          <CardContent className="pt-5 pb-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-sky-600 dark:text-sky-400">Shipping</p>
-                <p className="text-2xl font-bold text-sky-700 dark:text-sky-300">{formatCompact(shipping)}</p>
-                <p className="text-xs text-sky-500 dark:text-sky-400">{shippingPercent.toFixed(1)}% of sales</p>
-              </div>
-              <div className="rounded-full bg-sky-200/50 p-3 dark:bg-sky-800/30">
-                <Truck className="h-5 w-5 text-sky-600 dark:text-sky-400" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* CAC */}
+        <div className="flex-shrink-0 min-w-[100px] rounded-xl bg-orange-500/10 dark:bg-orange-500/20 p-3">
+          <div className="flex items-center gap-2 mb-1">
+            <Users className="h-3.5 w-3.5 text-orange-500" />
+            <span className="text-[10px] font-medium text-orange-600 dark:text-orange-400">CAC</span>
+          </div>
+          <p className="text-base font-bold text-orange-700 dark:text-orange-300">{formatCurrency(cac)}</p>
+        </div>
 
-        <Card className="bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-950/20 dark:to-amber-900/10">
-          <CardContent className="pt-5 pb-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-amber-600 dark:text-amber-400">Returns</p>
-                <p className="text-2xl font-bold text-amber-700 dark:text-amber-300">{formatCompact(returns)}</p>
-                <p className="text-xs text-amber-500 dark:text-amber-400">{returnsPercent.toFixed(1)}% of sales</p>
-              </div>
-              <div className="rounded-full bg-amber-200/50 p-3 dark:bg-amber-800/30">
-                <RotateCcw className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* MER */}
+        <div className="flex-shrink-0 min-w-[100px] rounded-xl bg-blue-500/10 dark:bg-blue-500/20 p-3">
+          <div className="flex items-center gap-2 mb-1">
+            <TrendingUp className="h-3.5 w-3.5 text-blue-500" />
+            <span className="text-[10px] font-medium text-blue-600 dark:text-blue-400">MER</span>
+          </div>
+          <p className="text-base font-bold text-blue-700 dark:text-blue-300">{mer.toFixed(2)}x</p>
+        </div>
 
-        <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-950/20 dark:to-emerald-900/10">
-          <CardContent className="pt-5 pb-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400">Net Profit</p>
-                <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">{formatCompact(netProfit)}</p>
-                <p className="text-xs text-emerald-500 dark:text-emerald-400">{netProfitPercent.toFixed(1)}% margin</p>
-              </div>
-              <div className="rounded-full bg-emerald-200/50 p-3 dark:bg-emerald-800/30">
-                <Wallet className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+        {/* COGS */}
+        <div className="flex-shrink-0 min-w-[100px] rounded-xl bg-rose-500/10 dark:bg-rose-500/20 p-3">
+          <div className="flex items-center gap-2 mb-1">
+            <Package className="h-3.5 w-3.5 text-rose-500" />
+            <span className="text-[10px] font-medium text-rose-600 dark:text-rose-400">COGS</span>
+          </div>
+          <p className="text-base font-bold text-rose-700 dark:text-rose-300">{formatCompact(cogs)}</p>
+          <p className="text-[10px] text-rose-500">{cogsPercent.toFixed(1)}%</p>
+        </div>
+
+        {/* Shipping */}
+        <div className="flex-shrink-0 min-w-[100px] rounded-xl bg-sky-500/10 dark:bg-sky-500/20 p-3">
+          <div className="flex items-center gap-2 mb-1">
+            <Truck className="h-3.5 w-3.5 text-sky-500" />
+            <span className="text-[10px] font-medium text-sky-600 dark:text-sky-400">Shipping</span>
+          </div>
+          <p className="text-base font-bold text-sky-700 dark:text-sky-300">{formatCompact(shipping)}</p>
+          <p className="text-[10px] text-sky-500">{shippingPercent.toFixed(1)}%</p>
+        </div>
+
+        {/* Returns */}
+        <div className="flex-shrink-0 min-w-[100px] rounded-xl bg-amber-500/10 dark:bg-amber-500/20 p-3">
+          <div className="flex items-center gap-2 mb-1">
+            <RotateCcw className="h-3.5 w-3.5 text-amber-500" />
+            <span className="text-[10px] font-medium text-amber-600 dark:text-amber-400">Returns</span>
+          </div>
+          <p className="text-base font-bold text-amber-700 dark:text-amber-300">{formatCompact(returns)}</p>
+          <p className="text-[10px] text-amber-500">{returnsPercent.toFixed(1)}%</p>
+        </div>
+
+        {/* Net Profit */}
+        <div className="flex-shrink-0 min-w-[100px] rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 p-3">
+          <div className="flex items-center gap-2 mb-1">
+            <Wallet className="h-3.5 w-3.5 text-emerald-500" />
+            <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400">Net Profit</span>
+          </div>
+          <p className="text-base font-bold text-emerald-700 dark:text-emerald-300">{formatCompact(netProfit)}</p>
+          <p className="text-[10px] text-emerald-500">{netProfitPercent.toFixed(1)}%</p>
+        </div>
+
+        {/* Ad Spend */}
+        <div className="flex-shrink-0 min-w-[100px] rounded-xl bg-pink-500/10 dark:bg-pink-500/20 p-3">
+          <div className="flex items-center gap-2 mb-1">
+            <Target className="h-3.5 w-3.5 text-pink-500" />
+            <span className="text-[10px] font-medium text-pink-600 dark:text-pink-400">Ad Spend</span>
+          </div>
+          <p className="text-base font-bold text-pink-700 dark:text-pink-300">{formatCompact(adSpend)}</p>
+        </div>
+      </HorizontalScroll>
 
       {/* Charts Row */}
       <div className="grid gap-6 lg:grid-cols-2">
@@ -310,7 +341,21 @@ export function ShopifyDashboard({ dateRange, refreshKey }: ShopifyDashboardProp
                 <div className="h-2 w-2 rounded-full bg-green-500" />
                 Shopify Revenue
               </span>
-              <span className="text-xs font-normal text-muted-foreground">Last 30 Days</span>
+              <div className="flex items-center gap-1">
+                {(["7d", "30d", "90d"] as ChartTimeRange[]).map((range) => (
+                  <button
+                    key={range}
+                    onClick={() => setChartTimeRange(range)}
+                    className={`px-2 py-1 text-xs font-medium rounded-md transition-colors ${
+                      chartTimeRange === range
+                        ? "bg-green-500 text-white"
+                        : "text-muted-foreground hover:bg-muted"
+                    }`}
+                  >
+                    {range.toUpperCase()}
+                  </button>
+                ))}
+              </div>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -364,7 +409,7 @@ export function ShopifyDashboard({ dateRange, refreshKey }: ShopifyDashboardProp
                 <div className="h-2 w-2 rounded-full bg-green-500" />
                 Orders per Day
               </span>
-              <span className="text-xs font-normal text-muted-foreground">Last 30 Days</span>
+              <span className="text-xs font-normal text-muted-foreground">{chartRangeLabels[chartTimeRange]}</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
